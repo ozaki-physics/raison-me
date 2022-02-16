@@ -1,0 +1,13 @@
+services:
+  raison_me:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: go1.16:raison_me
+    container_name: go_raison_me
+    tty: true
+    volumes:
+      - .:/go/src/github.com/ozaki-physics/raison-me:rw
+    ports:
+      - "127.0.0.1:8080:8080"
+    command: bash
