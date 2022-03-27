@@ -164,128 +164,9 @@ erDiagram
   COIN ||--o{ TRANSACTION : "coin の id"
 ```
 ## クラス図
-実装と依存の矢印の違い  
-```mermaid
-classDiagram
-  A ..> B : 依存
-  C ..|> D : 実装
-```
-```mermaid
-classDiagram
-  CoinRepository ..> Coin
-  TransactionRepository ..> Transaction
-  cryptoAssetsUsecase ..> CoinRepository
-  cryptoAssetsUsecase ..> TransactionRepository
-  cryptoAssetsPresen ..> CryptoAssetsUsecase
+mermaid から drawio で書いた [svg](./crypto-assets.svg) に変更  
 
-  routes ..> CryptoAssetsPresen
-
-  coinInfra ..> coinMarketCap
-  coinMarketCap ..> config
-
-  coinInfra ..|> CoinRepository
-  transactionInfra ..|> TransactionRepository
-  cryptoAssetsUsecase ..|> CryptoAssetsUsecase
-  cryptoAssetsPresen ..|> CryptoAssetsPresen
-  routes ..|> Routes
-
-  class Coin {
-    - string symbol
-    - float64 bid
-    - constructCoin()
-    + ReconstructCoin()
-    + Bid()
-  }
-  class CoinRepository {
-    <<interface>>
-    + FindBySymbol()
-  }
-  class Transaction {
-    - string symbol
-    - int side
-    - float64 priceRate
-    - float64 size
-    - int fee
-    - string time
-    - constructTransaction()
-    - createTransaction()
-    + ReconstructTransaction()
-    + TransactionPrice()
-    + PriceRate()
-    + Size()
-  }
-  class TransactionRepository {
-    <<interface>>
-    + FindByID()
-    + FindBySymbol()
-  }
-  class coinInfra {
-    - dataCMCID data
-    + CreateCoinRepository()
-    + FindBySymbol()
-  }
-  class transactionInfra {
-    - map[string]coinTransaction data
-    + CreateTransactionRepository()
-    + FindByID()
-    + FindBySymbol()
-  }
-  class cryptoAssetsUsecase {
-    - CoinRepository coin
-    - TransactionRepository transaction
-    + CreateCryptoAssetsUsecase()
-    + CoinAveragePrice()
-    + CoinPrice()
-    + CoinSize()
-    + CoinGainPrice()
-    + CoinGainPercent()
-    + CoinPriceStepSize()
-    + TransactionPrice()
-  }
-  class CryptoAssetsUsecase {
-    <<interface>>
-    + CoinAveragePrice()
-    + CoinPrice()
-    + CoinSize()
-    + CoinGainPrice()
-    + CoinGainPercent()
-    + CoinPriceStepSize()
-    + TransactionPrice()
-  }
-  class cryptoAssetsPresen {
-    - CryptoAssetsUsecase cryptoAssetsUsecase
-    + CreateCrypocryptoAssetsPresen()
-    + Get()
-  }
-  class CryptoAssetsPresen {
-    <<interface>>
-    + Get()
-  }
-  class routes {
-    - CryptoAssetsPresen caPresen
-    + CreateCryptoAssetsRoutes()
-    + Handler()
-  }
-  class Routes {
-    <<interface>>
-    + Handler()
-  }
-
-  class config {
-    + string GCPProjectID
-    + boolean IsLive
-    + GetGCPSecretValue()
-  }
-  class coinMarketCap {
-    + string Key
-    + string baseURL
-    # getCredential()
-    # getQuotesLatest()
-    - generateSymbolAndPrice()
-    - makeQueryParmCMCID()
-  }
-
-```
+ここには気になったことを書く  
 - 命名がよくない  
 -> cryptoAssetsPresen は ちゃんと apiController, htmlController などにした方がいい  
 -> config は ちゃんと credential などにした方がいい  
@@ -301,38 +182,28 @@ classDiagram
 -> Usecase 層 の同じ interface を使っていることで表現できるかと  
 - Usecase 層 は メソッド1個1個で interface で公開すべき?
 -> 現時点ではあるまとまりで interface を作って 各 Controller に その interface を実装する
-
-### 依存関係だけを表した図  
-実装と依存の矢印の違い  
-```mermaid
-flowchart TB
-  A -. 依存 .-> B
-  C -- 実装 --> D
-```
-結局いい感じに書けなくて Draw.io を使いたくなる気持ちはとても分かった笑  
-メソッド名まで書いていると ドキュメントの保守が大変になるから書かない方がいいかも  
-```mermaid
-flowchart LR
-  coinInfra --> CoinRepository
-  transactionInfra --> TransactionRepository
-  cryptoAssetsUsecase --> CryptoAssetsUsecase
-  cryptoAssetsPresen --> CryptoAssetsPresen
-  routes --> Routes
-
-  CoinRepository -.-> Coin
-  TransactionRepository -.-> Transaction
-  cryptoAssetsUsecase -.-> CoinRepository
-  cryptoAssetsUsecase -.-> TransactionRepository
-  cryptoAssetsPresen -.-> CryptoAssetsUsecase
-
-  routes -.-> CryptoAssetsPresen
-
-  coinInfra -.-> coinMarketCap
-  coinMarketCap -.-> config
-
-  CoinRepository("CoinRepository \n interface")
-  TransactionRepository("TransactionRepository \n interface")
-  CryptoAssetsUsecase("CryptoAssetsUsecase \n interface")
-  CryptoAssetsPresen("CryptoAssetsPresen \n interface")
-  Routes("Routes \n interface")
-```
+- Repository にDI するときに CMC か GMOCoin かを入れると切り替えができそう  
+- LINE bot のために key が必要だが Secret Manager は infra 層 にあるから層を越えることになる  
+  - SecretManager にアクセスするクラスは どの層からも使えるような場所を作る? -> 低凝集になる  
+  - Presentation 層で SecretManager にアクセスするコードを書く? -> サービス内に同じことが書かれたコードが増え冗長  
+  - credential interface を domain 層に持っていき Usecase 層を経由して使う? -> LINE bot で使えるかは使用方法の1種だからドメインほどコアではない  
+-> key は環境変数みたいなものだからどこからアクセスしてもいい気がする, しかし コアに関係なく外界の環境のためにある  
+-> よって infra 層の Share だけ どの層から呼んでも良いとする(絶対に各サービスを越える共通オブジェクトは作らない, 将来 各サービスごとに分離できなくなるから)  
+- 中途半端に 本番環境と開発環境, テストとモック のことを考えているから冗長なコードが増えている?  
+-> 勉強不足ではあるが とりあえず作りたいから作り進める  
+- ファイル名の接頭辞に cryptoAssets_ が付与されていて cryptoAsset 以外のコンテキストを作ったときに名前空間が衝突する  
+  - そもそもパッケージ名はアンダースコアや大文字が混ざるのは良くない  
+  - 一般的に使われてる単語 crypto だけも良くない  
+-> 妥協して cryptoAsset にする(domain/cryptoAsset など) 各層のファイルには `package cryptoAsset` と記述されるが諦める
+-> 同じ `package cryptoAsset` と記述されるが ちゃんと名前空間は別になっている  
+-> import するときに 別名で層の名前を付けて識別する  
+-> 自分がどの層の cryptoAsset を編集しているかは ファイル名から判断する  
+- capital/infrastructure/json にある LINE bot の key は LINE bot(テスト)  
+-> LINE bot(本番)は GCP のSecret Manager  
+-> テスト環境にデプロイしたら テスト環境 の SecretManager に保存された LINE bot(テスト)の key が使われるだけ  
+- credential の interface は何を抽象化するのか  
+-> 何の永続化ツール(db, JSON, GCP など)から入手した情報かを 区別しない  
+-> ただ どのサービス(CoinMarketCap, LINE)のクレデンシャルかは 区別する  
+- credential が テスト環境か 本番環境か 区別を抽象化したい  
+-> 外部から infra 層で使いやすい形の Dto を作る  
+-> その Dto を作るときに テスト環境か 本番環境か の boolen を渡して判別する  
