@@ -207,3 +207,11 @@ mermaid から drawio で書いた [svg](./crypto-assets.svg) に変更
 - credential が テスト環境か 本番環境か 区別を抽象化したい  
 -> 外部から infra 層で使いやすい形の Dto を作る  
 -> その Dto を作るときに テスト環境か 本番環境か の boolen を渡して判別する  
+- 正しい使い方じゃない気がするが 外部から取得して infra 層で使いやすい形に変換したものを XXXDto って名前つけがち  
+- 詰め替えるときのメソッド名を generate にしがち(Create だと DI するときの init な雰囲気するから 使わない, make だと generate よりも軽く一部を抜き出しただけな感じ)  
+- LINE の通信に必要な apiKey などは infra 層にする, ただ Presentation 層から infra 層へ依存するのはダメなので infra/Share という特別な package に配置する  
+-> Presentation 層は 外部との内容に注力すべきであって 外部と通信するために必要なものは Presentation 層ではないと思うから infra 層にした  
+- 命名規則というほどじゃないけど json をマッピングした struct には dataXXX って名前をつけがち  
+- REST API にするために `http.HandleFunc()` の第2引数では http メソッドを固定することができない  
+-> echo, gin は どうやって url の仕分けと http メソッド の仕分けを両立しているんだろう  
+-> 勉強がしたいのか, 便利ツールを作りたいのか どちらを優先しようか
