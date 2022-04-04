@@ -1,10 +1,11 @@
 package main
 
 import (
-	"github.com/ozaki-physics/raison-me/helloworld"
+	"github.com/ozaki-physics/raison-me/capital"
 )
 
 func main() {
 	// fmt.Println("hello world!")
-	helloworld.Main()
+	// helloworld.Main()
+	capital.MainCapital()
 }
