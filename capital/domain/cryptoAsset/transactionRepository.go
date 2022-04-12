@@ -1,4 +1,4 @@
-package domain
+package cryptoasset
 
 // TransactionRepository トランザクションのインタフェース
 // この struct は ユースケース層 で使われて 実装は インフラ層

@@ -1,4 +1,4 @@
-package domain
+package cryptoasset
 
 import (
 	"errors"
@@ -41,9 +41,9 @@ func constructTransaction(symbol string, side int, priceRate float64, size float
 }
 
 // createTransaction 取引履歴を作成
-func createTransaction(symbol string, side int, priceRate float64, size float64, fee int, time string) (*Transaction, error) {
-	return constructTransaction(symbol, side, priceRate, size, fee, time)
-}
+// func createTransaction(symbol string, side int, priceRate float64, size float64, fee int, time string) (*Transaction, error) {
+// 	return constructTransaction(symbol, side, priceRate, size, fee, time)
+// }
 
 // reconstructTransaction DB などの値からインスタンスを再構成
 func ReconstructTransaction(symbol string, side int, priceRate float64, size float64, fee int, time string) (*Transaction, error) {

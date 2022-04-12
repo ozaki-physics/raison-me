@@ -1,4 +1,4 @@
-package domain
+package cryptoasset
 
 import "errors"
 
