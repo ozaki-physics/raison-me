@@ -1,28 +1,10 @@
-package usecase
+package cryptoasset
 
 import (
 	"log"
 
-	"github.com/ozaki-physics/raison-me/capital/domain"
+	domain "github.com/ozaki-physics/raison-me/capital/domain/cryptoAsset"
 )
-
-// CryptoAssetsUsecase ユースケースのインタフェース
-type CryptoAssetsUsecase interface {
-	// 平均約定レート を確認する
-	CoinAveragePrice(symbol string) (float64, error)
-	// 評価額 を確認する
-	CoinPrice(symbol string) (float64, error)
-	// 保有枚数 を確認する
-	CoinSize(symbol string) (float64, error)
-	// コインの損益 を確認する
-	CoinGainPrice(symbol string) (float64, error)
-	// 損益の割合 を確認する
-	CoinGainPercent(symbol string) (float64, error)
-	// 価格ごとの枚数 を確認する
-	CoinPriceStepSize(symbol string) (map[float64]float64, error)
-	// ある取引の約定代金 を確認する
-	TransactionPrice(transactionId int) (float64, error)
-}
 
 // cryptoAssetsUsecase ユースケースの実体
 type cryptoAssetsUsecase struct {
@@ -30,9 +12,9 @@ type cryptoAssetsUsecase struct {
 	transaction domain.TransactionRepository
 }
 
-// CreateCryptoAssetsUsecase ユースケースのコンストラクタ
+// CreateCryptoAssetUsecase ユースケースのコンストラクタ
 // 戻り値がインタフェースだから 実装を強制できる
-func CreateCryptoAssetsUsecase(dc domain.CoinRepository, dt domain.TransactionRepository) CryptoAssetsUsecase {
+func CreateCryptoAssetUsecase(dc domain.CoinRepository, dt domain.TransactionRepository) CryptoAssetsUsecase {
 	return &cryptoAssetsUsecase{dc, dt}
 }
 
