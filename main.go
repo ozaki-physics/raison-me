@@ -7,5 +7,5 @@ import (
 func main() {
 	// fmt.Println("hello world!")
 	// helloworld.Main()
-	capital.MainCapital()
+	capital.CryptoAsset()
 }
