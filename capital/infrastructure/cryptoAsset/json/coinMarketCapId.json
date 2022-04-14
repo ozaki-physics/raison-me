@@ -2,31 +2,31 @@
   "data": [
     {
       "symbol": "BTC",
-      "CMCID": 1
+      "CMCId": 1
     },
     {
       "symbol": "ETH",
-      "CMCID": 1027
+      "CMCId": 1027
     },
     {
       "symbol": "DOT",
-      "CMCID": 6636
+      "CMCId": 6636
     },
     {
       "symbol": "BAT",
-      "CMCID": 1697
+      "CMCId": 1697
     },
     {
       "symbol": "ENJ",
-      "CMCID": 2130
+      "CMCId": 2130
     },
     {
       "symbol": "XTZ",
-      "CMCID": 2011
+      "CMCId": 2011
     },
     {
       "symbol": "ATOM",
-      "CMCID": 3794
+      "CMCId": 3794
     }
   ]
 }

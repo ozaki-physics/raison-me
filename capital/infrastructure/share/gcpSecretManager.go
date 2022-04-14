@@ -1,4 +1,4 @@
-package config
+package share
 
 import (
 	"context"
@@ -11,10 +11,9 @@ import (
 
 const (
 	GCPProjectID = "raison-me"
-	IsLive       = false
 )
 
-func GetGCPSecretValue(name string, version int) (string, error) {
+func GcpSecretValue(name string, version int) (string, error) {
 	ctx := context.Background()
 	client, err := secretManager.NewClient(ctx)
 	if err != nil {

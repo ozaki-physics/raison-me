@@ -1,4 +1,4 @@
-package infrastructure
+package cryptoasset
 
 import (
 	"encoding/json"
@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/ozaki-physics/raison-me/capital/domain"
+	domain "github.com/ozaki-physics/raison-me/capital/domain/cryptoAsset"
 )
 
 // dataTransaction JSON から struct に変換する
@@ -38,7 +38,7 @@ func CreateTransactionRepository() domain.TransactionRepository {
 	// 何度も JSON を読み込まなくていいように インスタンス変数に格納しておく
 
 	// 取引履歴を読み込む
-	bytes, err := os.ReadFile("./capital/json/cryptoassets_Transaction.json")
+	bytes, err := os.ReadFile("./capital/infrastructure/cryptoAsset/json/transaction.json")
 	if err != nil {
 		log.Fatalln(err)
 	}
