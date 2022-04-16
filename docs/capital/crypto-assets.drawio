@@ -313,6 +313,123 @@
             </root>
         </mxGraphModel>
     </diagram>
+    <diagram id="I3g_RmzQcBjS6MIaEn7L" name="一部を異なる角度から見る">
+        <mxGraphModel dx="2156" dy="1084" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+            <root>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-0"/>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-1" parent="UqzN7QoE_zpk5NfVHPHN-0"/>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-9" value="infra 層" style="swimlane;fillColor=none;" parent="UqzN7QoE_zpk5NfVHPHN-1" vertex="1">
+                    <mxGeometry x="527" y="121.5" width="254" height="270" as="geometry">
+                        <mxRectangle x="611" y="280" width="70" height="23" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-69" value="&lt;span&gt;Cmc&lt;br&gt;interface&lt;br&gt;Sandbox or Live&lt;br&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;" parent="UqzN7QoE_zpk5NfVHPHN-9" vertex="1">
+                    <mxGeometry x="18.5" y="112.5" width="90" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-16" value="&lt;span&gt;gcpCredentialCMC&lt;br&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;" parent="UqzN7QoE_zpk5NfVHPHN-9" vertex="1">
+                    <mxGeometry x="10" y="44" width="107" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-15" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;" parent="UqzN7QoE_zpk5NfVHPHN-9" source="UqzN7QoE_zpk5NfVHPHN-16" target="UqzN7QoE_zpk5NfVHPHN-69" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="&lt;span&gt;apiCoinMarketCap&lt;br&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;" parent="UqzN7QoE_zpk5NfVHPHN-9" vertex="1">
+                    <mxGeometry x="138.5" y="112.5" width="110" height="45" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="UqzN7QoE_zpk5NfVHPHN-9" source="3" target="UqzN7QoE_zpk5NfVHPHN-69" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-14" value="&lt;span&gt;jsonCredentialCMC&lt;br&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;" parent="UqzN7QoE_zpk5NfVHPHN-9" vertex="1">
+                    <mxGeometry x="7" y="189.5" width="113" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-13" style="edgeStyle=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;dashed=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="UqzN7QoE_zpk5NfVHPHN-9" source="UqzN7QoE_zpk5NfVHPHN-14" target="UqzN7QoE_zpk5NfVHPHN-69" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="83" y="164" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-27" value="Presentation 層" style="swimlane;fillColor=none;" parent="UqzN7QoE_zpk5NfVHPHN-1" vertex="1">
+                    <mxGeometry x="20" y="164.5" width="150" height="140" as="geometry">
+                        <mxRectangle x="150" y="250" width="120" height="23" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-29" value="&lt;span&gt;lineController&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;" parent="UqzN7QoE_zpk5NfVHPHN-27" vertex="1">
+                    <mxGeometry x="32" y="66" width="84" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-67" value="Service :&lt;br&gt;&amp;nbsp; capital&lt;br&gt;Context :&lt;br&gt;&amp;nbsp; cryptoAsset" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;darkOpacity=0.05;fillColor=none;align=left;" parent="UqzN7QoE_zpk5NfVHPHN-1" vertex="1">
+                    <mxGeometry width="92" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-68" value="Share(環境変数的な概念として infra 層にある)" style="swimlane;startSize=23;" parent="UqzN7QoE_zpk5NfVHPHN-1" vertex="1">
+                    <mxGeometry x="190" y="100" width="320" height="280" as="geometry">
+                        <mxRectangle x="16" y="37" width="70" height="23" as="alternateBounds"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-70" value="&lt;span&gt;LineChannel&lt;br&gt;interface&lt;br&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;" parent="UqzN7QoE_zpk5NfVHPHN-68" vertex="1">
+                    <mxGeometry x="17.5" y="133" width="90" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-79" style="edgeStyle=none;html=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;dashed=1;" parent="UqzN7QoE_zpk5NfVHPHN-68" source="UqzN7QoE_zpk5NfVHPHN-77" target="UqzN7QoE_zpk5NfVHPHN-70" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-77" value="&lt;span&gt;jsonCredentialLine&lt;br&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;" parent="UqzN7QoE_zpk5NfVHPHN-68" vertex="1">
+                    <mxGeometry x="6" y="210.5" width="113" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-80" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;dashed=1;" parent="UqzN7QoE_zpk5NfVHPHN-68" source="UqzN7QoE_zpk5NfVHPHN-78" target="UqzN7QoE_zpk5NfVHPHN-70" edge="1">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-78" value="&lt;span&gt;gcpCredentialLine&lt;br&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;" parent="UqzN7QoE_zpk5NfVHPHN-68" vertex="1">
+                    <mxGeometry x="9" y="65" width="107" height="35" as="geometry"/>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-95" value="JsonToStruct()&lt;br&gt;&lt;span&gt;依存方向がダメな気がするが&lt;br&gt;ニュアンスは jsonXXX に&lt;br&gt;含まれているものと考える&lt;br&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;" parent="UqzN7QoE_zpk5NfVHPHN-68" vertex="1">
+                    <mxGeometry x="135.5" y="189.5" width="170" height="77" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="UqzN7QoE_zpk5NfVHPHN-68" source="UqzN7QoE_zpk5NfVHPHN-77" target="UqzN7QoE_zpk5NfVHPHN-95" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="107.5" y="221.5" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-62" value="GCP&lt;br&gt;Secret Manager" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=none;" parent="UqzN7QoE_zpk5NfVHPHN-1" vertex="1">
+                    <mxGeometry x="365.5" y="17" width="90" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-35" style="edgeStyle=none;html=1;exitX=0.5;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;startArrow=classic;startFill=1;" parent="UqzN7QoE_zpk5NfVHPHN-1" source="UqzN7QoE_zpk5NfVHPHN-62" target="UqzN7QoE_zpk5NfVHPHN-87" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="407" y="19.5" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-88" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;startArrow=none;startFill=0;" parent="UqzN7QoE_zpk5NfVHPHN-1" source="UqzN7QoE_zpk5NfVHPHN-16" target="UqzN7QoE_zpk5NfVHPHN-87" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="551.5" y="202" as="sourcePoint"/>
+                        <mxPoint x="674.5" y="183" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-84" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=none;startFill=0;" parent="UqzN7QoE_zpk5NfVHPHN-1" source="UqzN7QoE_zpk5NfVHPHN-29" target="UqzN7QoE_zpk5NfVHPHN-70" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="223" y="366.5" as="targetPoint"/>
+                        <mxPoint x="215" y="311.5000000000002" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-97" value="JSON&lt;br&gt;Key" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=none;" parent="UqzN7QoE_zpk5NfVHPHN-1" vertex="1">
+                    <mxGeometry x="380.5" y="400" width="60" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-83" style="edgeStyle=none;html=1;entryX=0.5;entryY=1;entryDx=0;entryDy=0;startArrow=classic;startFill=1;exitX=0.5;exitY=0;exitDx=0;exitDy=0;exitPerimeter=0;" parent="UqzN7QoE_zpk5NfVHPHN-1" source="UqzN7QoE_zpk5NfVHPHN-97" target="UqzN7QoE_zpk5NfVHPHN-95" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="434" y="450" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="1" style="edgeStyle=none;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="UqzN7QoE_zpk5NfVHPHN-1" source="UqzN7QoE_zpk5NfVHPHN-14" target="UqzN7QoE_zpk5NfVHPHN-95" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="557" y="361.5" as="sourcePoint"/>
+                        <mxPoint x="521.5" y="325" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-87" value="&lt;span&gt;GcpSecretValue()&lt;br&gt;依存方向がダメな気がするが&lt;br&gt;ニュアンスは gcpCredentialXXX に&lt;br&gt;含まれているものと考える&lt;br&gt;&lt;/span&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;" parent="UqzN7QoE_zpk5NfVHPHN-1" vertex="1">
+                    <mxGeometry x="325.5" y="144.5" width="170" height="77" as="geometry"/>
+                </mxCell>
+                <mxCell id="UqzN7QoE_zpk5NfVHPHN-89" style="edgeStyle=none;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;startArrow=none;startFill=0;" parent="UqzN7QoE_zpk5NfVHPHN-1" source="UqzN7QoE_zpk5NfVHPHN-78" target="UqzN7QoE_zpk5NfVHPHN-87" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="278.5" y="282" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
     <diagram id="rU52HTwYEXRL7w_4NgQ1" name="20220324">
         <mxGraphModel dx="2156" dy="1084" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
