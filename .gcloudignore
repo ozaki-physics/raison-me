@@ -5,3 +5,6 @@ README.md
 Dockerfile
 docker-compose.yml
 docs/
+
+capital/infrastructure/cryptoAsset/json/key.json
+capital/infrastructure/share/json/key.json

@@ -70,3 +70,10 @@ You must log in to continue. Would you like to log in (Y/n)? Yでエンター
 $ gcloud app deploy
 # リージョンは us-west1
 ```
+
+## SecretManager
+[Secret Manager client libraries](https://cloud.google.com/secret-manager/docs/reference/libraries#client-libraries-install-go)  
+`$ go get cloud.google.com/go/secretmanager/apiv1`  
+`go get: added cloud.google.com/go/secretmanager v1.3.0`  
+`$ go get google.golang.org/genproto/googleapis/cloud/secretmanager/v1`  
+`$ go mod tidy`  
