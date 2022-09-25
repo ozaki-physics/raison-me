@@ -18,10 +18,16 @@ handlers:
   static_files: web/robots.txt
   upload: web/robots.txt
 
-- url: (.*)/favicon.txt
-  static_files: web/favicon.txt
-  upload: web/favicon.txt
+- url: (.*)/favicon.ico
+  static_files: web/favicon.ico
+  upload: web/favicon.ico
 
 - url: (.*)/humans.txt
   static_files: web/humans.txt
   upload: web/humans.txt
+
+# 常に https
+- url: .*
+  secure: always
+  redirect_http_response_code: 301
+  script: auto

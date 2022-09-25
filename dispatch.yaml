@@ -16,9 +16,3 @@ dispatch:
   service: default
 - url: "zeit.raison.me/*"
   service: default
-
-# 常に https
-- url: /.*
-  secure: always
-  redirect_http_response_code: 301
-  script: auto
