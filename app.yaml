@@ -11,3 +11,17 @@ automatic_scaling:
   min_pending_latency: 3000ms
   # 新しいインスタンスを起動するための CPU 使用率のしきい値
   target_cpu_utilization: 0.8
+
+# 静的ファイル
+handlers:
+- url: (.*)/robots.txt
+  static_files: web/robots.txt
+  upload: web/robots.txt
+
+- url: (.*)/favicon.txt
+  static_files: web/favicon.txt
+  upload: web/favicon.txt
+
+- url: (.*)/humans.txt
+  static_files: web/humans.txt
+  upload: web/humans.txt
