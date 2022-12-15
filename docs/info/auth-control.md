@@ -205,7 +205,6 @@ __〇〇できる__ で洗い出す
 最低限の機能  
 - ユーザー の作成
 - ユーザー でログイン
-- ユーザー が 任意のユーザー に ユーザーロール を付与できる
 - IDトークン の 発行 ができる
 - IDトークン の 無効化 ができる
 - アクセストークン の 発行 ができる
@@ -244,54 +243,80 @@ flowchart LR
 ```
 ## ドメインモデル図
 ```mermaid
-flowchart RL
-  subgraph account [アカウント]
+flowchart LR
+  subgraph context [対象]
     direction LR
-    account_id(アカウントID)
-    pass(パスワード)
-    createTime(作成日)
-    deleteTime(論理削除日)
-    accessKey(アクセスキー)
+    contextID(対象ID)
+    contextName(対象名)
   end
-
-  account -- 1...1 --> accessGroup
-  subgraph access [権限]
+  subgraph operation [操作]
     direction LR
-    access_name(権限名)
+    operationID(操作ID)
+    operationName(操作名)
   end
-
-  accessGroup -- 1...n --> access
-  subgraph accessGroup [権限グループ]
+  subgraph authorization [権限]
     direction LR
-    group_name(グループ名)
+    authorizationID(権限ID)
+    fooID(操作ID)
+    barID(アカウントID)
   end
-
-  account --"アカウント亜種"--> user
   subgraph user [ユーザー]
     direction LR
+    accountID(アカウントID)
+    userID(ユーザーID)
+    userName(ユーザー名)
+    password(パスワード)
+  end
+  subgraph token [トークン]
+    direction LR
+    tokenID(トークンID)
+    IDToken(IDトークン)
+    accessToken(アクセストークン)
   end
 
-  account --"アカウント亜種"--> admin
-  subgraph admin [管理者]
-    direction LR
-  end
+operation -- 1,n ... 1 --> context
+authorization -- 0,n ... 1 --> operation
+user -- 0,n ... 1 --> authorization
+token -- 0,1 ... 1 --> user
 
-  subgraph person [本人]
-    direction LR
-    email(メアド)
-  end
- 
-question01("年齢いる?")
-question01 -.- person
-question02("本人に関する情報はどこまでいる?")
-question02 -.- person
-question03("本人とユーザーは紐づける?")
+rule01("日本語, 絵文字 OK")
+rule01 -.- userName
+rule02("文字種の制限")
+rule02 -.- password
+rule03("表には出さない")
+rule04("管理者を含めても一意")
+rule03 & rule04 -.- accountID
 ```
+ユーザーID を変えられるように アカウントID を作った  
+だけど ユーザーID も一意にならないと メンションができない  
+そもそも一意になりそうな値をハッシュ化する?
+アカウントID は表に出さない値だから どんなのでもいい
+
+あれ 権限とユーザーが循環してて良くない?  
+消そうとしたときに 鶏が先か卵が先か 問題になってしまう?  
+ユーザーが存在しないと 権限が存在できなくてダメ  
+権限 の アカウントID と ユーザー の アカウントID が同じことになってもいい?  
+ドメインモデル図 の時点で テーブル構成を考えてしまっている?  
+
+__もしかして ユーザー管理 と 権限管理 はドメインが別か?__
+__僕はまず ユーザー管理 ができるようにならないといけない__
 
 ついつい DB のことまで考えて key とか どっちのテーブルにIDを持つか とか考えてしまう  
 あくまで オブジェクト として考えないといけない  
 ## オブジェクト図
 オブジェクト図は 具体的値, ドメインモデル図 は英語名 も書く  
 
+出てくる名詞をとりあえず オブジェクト として考えてみるといい感じ?
+対象, ユーザー, ユーザーロール の3次元か?
+
+ユーザー 1個に対して トークン1個がフツーだよな
+そのユーザーが複数いるだけか!
+1ユーザーが複数トークンを生成できてるように見えるのは 管理者ロールを持ってるからか!
+
+だれのユーザーロールかって情報が必要?
+アカウントID(主), ユーザーロールID, アカウントID(フォロワー)
+2個で 一意が特定できるテーブルが必要?
+
+__考えすぎると疲れるから とりあえずログインできればいいか笑__
 ## ER 図
 ## クラス図

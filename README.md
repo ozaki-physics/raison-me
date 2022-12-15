@@ -3,10 +3,15 @@
 
 ## サービス
 ### capital
-- [暗号資産の価格管理](./docs/capital/crypto-assets.md) [クラス図みたいなもの](./docs/capital/crypto-assets.svg)
+- [暗号資産の価格管理](./docs/capital/crypto-assets.md)  
+  - [クラス図みたいなもの](./docs/capital/crypto-assets.svg)  
 ### delight
 ### growth
 ### info
+- [権限管理](./docs/info/auth-control.md)  
+  - [オブジェクト図みたいなもの](./docs/info/auth-control_object-graph.svg)  
+  - [ドメインモデル図みたいなもの](./docs/info/auth-control_domain-graph.svg)  
+- [アカウント管理](./docs/info/account-manager.md)  
 ### regung
 ### seed
 ### zeit
