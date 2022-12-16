@@ -8,10 +8,8 @@
 ### delight
 ### growth
 ### info
-- [権限管理](./docs/info/auth-control.md)  
-  - [オブジェクト図みたいなもの](./docs/info/auth-control_object-graph.svg)  
-  - [ドメインモデル図みたいなもの](./docs/info/auth-control_domain-graph.svg)  
-- [アカウント管理](./docs/info/account-manager.md)  
+- [認証管理](./docs/info/authN.md)  
+- [認可管理](./docs/info/authZ.md)  
 ### regung
 ### seed
 ### zeit
