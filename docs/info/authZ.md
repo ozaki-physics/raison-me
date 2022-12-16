@@ -1,4 +1,13 @@
-# 権限管理
+# 認可管理
+[よくわかる認証と認可](https://dev.classmethod.jp/articles/authentication-and-authorization/)  
+認証(Authentication: AuthN)  
+認可(Authorization: AuthZ)  
+
+IDトークン は 認証(authN)のコンテキストとする  
+
+__認証管理 を作った後に また考え直す__  
+
+
 権限種類は ACL, RBAC, ABAC のどれにするか  
 ABAC が一番柔軟だけど 実装が大変になるし 最初からそこまで必要か?って気持ち  
 ロールを細かくして 属性も運用でカバーできないかな?w  
