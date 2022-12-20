@@ -22,7 +22,7 @@ func constructTransaction(symbol string, side int, priceRate float64, size float
 	if side != 0 && side != 1 {
 		return nil, errors.New("売買区分を登録してください")
 	}
-	if priceRate == 0 {
+	if priceRate < 0 {
 		return nil, errors.New("約定レートを登録してください")
 	}
 	if size == 0 {
