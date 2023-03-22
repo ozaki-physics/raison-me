@@ -3,7 +3,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: go1.16:raison_me
+    image: go1.19:raison_me
     container_name: go_raison_me
     tty: true
     volumes:
