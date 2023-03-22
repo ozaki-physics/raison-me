@@ -19,7 +19,7 @@ $ docker-compose up -d
 # VS Code の通知(golang.go)より gopls だけ install をする
 
 # 基本は VS Code 内のターミナルで良いが ローカルの PowerShell からアクセスしたくなった場合
-$ docker-compose exec raison-me bash
+$ docker-compose exec raison_me bash
 # 初めて開発を始めるときは go mod を生成する
 /go/src/github.com/ozaki-physics/raison-me# go mod init $REPOSITORY
 # 終えるとき
@@ -55,17 +55,53 @@ $ docker image rm go1.16:raison_me
 $ docker-compose build
 ```
 
+### Go のバージョンを上げる
+1. Dockerfile  
+Go の バージョンを上げる  
+`RUN go mod download` をコメントアウト  
+2. docker-compose.yml の image 名を変更  
+3. image を build  
+4. コンテナ起動して exec で接続  
+5. go.mod の中身をほぼ空にする  
+以下だけにする  
+```
+module github.com/ozaki-physics/raison-me
+
+go 1.19
+```
+6. `go mod tidy` を実行  
+すると go.mod と go.sum が変更される  
+7. app.yaml の GAE のバージョンを上げる  
+8. Dockerfile で `RUN go mod download` のコメントアウトを戻す  
+9. image を作り直す  
+`docker image rm go1.19:raison_me`  
+`docker-compose build`  
+
 ## gcloud docker
 [GCP Container Repository](https://console.cloud.google.com/gcr/images/google.com:cloudsdktool/GLOBAL/cloud-sdk?authuser=9)をもとに pull する image を決める  
 ```bash
-$ docker pull gcr.io/google.com/cloudsdktool/cloud-sdk:372.0.0
+$ docker pull gcr.io/google.com/cloudsdktool/cloud-sdk:423.0.0
 # カレントディレクトリの内容を全部マウントする
-$ docker run -it --rm -v "$(pwd):/raison-me" gcr.io/google.com/cloudsdktool/cloud-sdk:372.0.0 bash
-$ cd raison-me
+$ docker run -it --rm -v "$(pwd):/raison-me" gcr.io/google.com/cloudsdktool/cloud-sdk:423.0.0 bash
+# 認証する
+$ gcloud auth login --no-browser
+# 表示される コマンドを gcloud がインストールされたホストのターミナルで実行
+# ブラウザが起動するからアカウントを許可(認証が完了すると勝手に遷移する)
+# ホストのターミナルで表示された URL を コピーして コンテナ内のターミナルに入力
+# 認証される
+$ cd raison-me/
+# プロジェクト ID の設定
+$ gcloud config set project PROJECT_ID
+# Google Compute Engine 使用されるデフォルトのゾーンを設定
+$ gcloud config set compute/zone us-west1-a
+# デフォルトのリージョンを設定
+$ gcloud config set compute/region us-west1
+# GAE をデプロイ
+$ gcloud app deploy
+```
+または  
+```bash
 $ gcloud init
-You must log in to continue. Would you like to log in (Y/n)? Yでエンター
-# URL が表示されるから ブラウザに入力して Google アカウントを選択
-# ワンタイムキーみたいなのが表示されるから console に入力
 # GCP のプロジェクトを選ぶ(raison-me を選択)
 $ gcloud app deploy
 # リージョンは us-west1
