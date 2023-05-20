@@ -5,6 +5,7 @@ go 1.19
 require (
 	cloud.google.com/go/secretmanager v1.10.0
 	github.com/line/line-bot-sdk-go/v7 v7.19.0
+	github.com/rs/xid v1.5.0
 	google.golang.org/genproto v0.0.0-20230306155012-7f2fa6fef1f4
 )
 
