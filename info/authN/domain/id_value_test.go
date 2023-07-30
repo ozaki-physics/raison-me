@@ -150,6 +150,17 @@ func TestNilID(t *testing.T) {
 	}
 }
 
+func TestIsNilID(t *testing.T) {
+	a := domain.NilID()
+	if a.IsNilID() != true {
+		t.Errorf("NilIDのはずなのに 判定メソッドが NilIDじゃない となっています")
+	}
+	b, _ := domain.NewID("a")
+	if b.IsNilID() != false {
+		t.Errorf("NilIDじゃないはずなのに 判定メソッドが NilID となっています")
+	}
+}
+
 func TestReNewID(t *testing.T) {
 	// テスト対象に渡す必要がある引数
 	type args struct {

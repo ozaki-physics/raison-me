@@ -11,7 +11,7 @@ type id struct {
 	value    string
 }
 
-func constructorID(prefixID string, val string) (id, error) {
+func constructorID(prefixID string, val string) (id, DomainError) {
 	if prefixID == "" {
 		return NilID(), NewDomainError("ID生成時のプレフィックスが存在しません")
 	}
@@ -27,12 +27,12 @@ func constructorID(prefixID string, val string) (id, error) {
 	return id, nil
 }
 
-func NewID(prefixID string) (id, error) {
+func NewID(prefixID string) (id, DomainError) {
 	guid := xid.New()
 	return constructorID(prefixID, guid.String())
 }
 
-func ReNewID(data string) (id, error) {
+func ReNewID(data string) (id, DomainError) {
 	sp := strings.Split(data, "-")
 	var val string
 	if len(sp) >= 3 {
@@ -48,7 +48,12 @@ func NilID() id {
 	return nilID
 }
 
+func (id *id) IsNilID() bool {
+	return *id == NilID()
+}
+
 // 以下ゲッター
+
 func (id *id) Val() string {
 	return id.prefixID + "-" + id.value
 }
