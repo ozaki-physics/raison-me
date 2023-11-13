@@ -2,21 +2,18 @@
 package capital
 
 import (
-	"log"
 	"net/http"
-	"os"
 
+	"github.com/go-chi/chi/v5"
 	infra "github.com/ozaki-physics/raison-me/capital/infrastructure/cryptoAsset"
 	share "github.com/ozaki-physics/raison-me/capital/infrastructure/share"
 	presen "github.com/ozaki-physics/raison-me/capital/presentation/cryptoAsset"
 	usecase "github.com/ozaki-physics/raison-me/capital/usecase/cryptoAsset"
+	"github.com/ozaki-physics/raison-me/share/config"
 )
 
-const serviceUrl = "/capital"
-
-func CryptoAsset() {
-	// cmcCredential := infra.CreateCredentialCoinMarketCapJson(false)
-	cmcCredential := infra.CreateCredentialCoinMarketCapGcp(true)
+func CryptoAsset() chi.Router {
+	cmcCredential := infra.CreateCredentialCoinMarketCapGcp(config.IsLive)
 	cmcIds := infra.CreateCMCIdsJson()
 	coinRepo := infra.CreateCoinRepository(cmcCredential, cmcIds)
 	transactionRepo := infra.CreateTransactionRepository()
@@ -29,18 +26,16 @@ func CryptoAsset() {
 	lineController := presen.CreateLineController(lineCredential, cryptoAssetUsecase)
 
 	// ルーティングの定義
-	http.HandleFunc(serviceUrl+"/crypto-assets/price", apiHandler.Handler)
-	http.HandleFunc(serviceUrl+"/crypto-assets/line", lineController.SoundReflection)
+	r := chi.NewRouter()
+	r.Route("/crypto-assets", func(r chi.Router) {
+		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+			w.Write([]byte("これは capital の cryptoAssets だよ\n"))
+		})
 
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "8080"
-		log.Printf("Defaulting to port %s", port)
-	}
-	log.Printf("Listening on port %s", port)
-
-	// サーバ起動
-	if err := http.ListenAndServe(":"+port, nil); err != nil {
-		log.Fatal("ListenAndServe", err)
-	}
+		r.HandleFunc("/price", apiHandler.Handler)
+		if config.IsLive {
+			r.HandleFunc("/line", lineController.SoundReflection)
+		}
+	})
+	return r
 }
