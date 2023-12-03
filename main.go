@@ -8,6 +8,7 @@ import (
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
 	"github.com/ozaki-physics/raison-me/capital"
+	"github.com/ozaki-physics/raison-me/info"
 )
 
 func main() {
@@ -23,14 +24,8 @@ func main() {
 	// w.WriteHeader(404)
 	// w.Write([]byte("404 page not found"))
 	// })
-
-	r.Route("/capital", func(r chi.Router) {
-		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte("これは capital だよ\n"))
-		})
-		r.Mount("/", capital.CryptoAsset())
-
-	})
+	r.Mount("/capital", capital.Router())
+	r.Mount("/info", info.Router())
 
 	port := os.Getenv("PORT")
 	if port == "" {

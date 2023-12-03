@@ -12,7 +12,20 @@ import (
 	"github.com/ozaki-physics/raison-me/share/config"
 )
 
-func CryptoAsset() chi.Router {
+// capital サービス を統括するルータ
+func Router() chi.Router {
+	// ルーティングの定義
+	r := chi.NewRouter()
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("これは capital だよ\n"))
+	})
+
+	r.Mount("/crypto-assets", routerCryptoAsset())
+	return r
+}
+
+// CryptoAsset コンテキスト を統括するルータ
+func routerCryptoAsset() chi.Router {
 	cmcCredential := infra.CreateCredentialCoinMarketCapGcp(config.IsLive)
 	cmcIds := infra.CreateCMCIdsJson()
 	coinRepo := infra.CreateCoinRepository(cmcCredential, cmcIds)
@@ -22,20 +35,17 @@ func CryptoAsset() chi.Router {
 	// REST API にするために
 	apiHandler := presen.CreateApiHandler(apiController)
 
-	lineCredential := share.CreateCredentialLineGcp()
-	lineController := presen.CreateLineController(lineCredential, cryptoAssetUsecase)
-
 	// ルーティングの定義
 	r := chi.NewRouter()
-	r.Route("/crypto-assets", func(r chi.Router) {
-		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			w.Write([]byte("これは capital の cryptoAssets だよ\n"))
-		})
-
-		r.HandleFunc("/price", apiHandler.Handler)
-		if config.IsLive {
-			r.HandleFunc("/line", lineController.SoundReflection)
-		}
+	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("これは capital の cryptoAssets だよ\n"))
 	})
+
+	r.HandleFunc("/price", apiHandler.Handler)
+	if config.IsLive {
+		lineCredential := share.CreateCredentialLineGcp()
+		lineController := presen.CreateLineController(lineCredential, cryptoAssetUsecase)
+		r.HandleFunc("/line", lineController.SoundReflection)
+	}
 	return r
 }
