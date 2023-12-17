@@ -1,0 +1,16 @@
+{
+  "pass":[
+    {
+      "pass_id": 1,
+      "account_id": 1,
+      "password": "aaa",
+      "issued_at": "2022-12-17T12:28"
+    },
+    {
+      "pass_id": 2,
+      "account_id": 2,
+      "password": "bbb",
+      "issued_at": "2023-03-26T18:48"
+    }
+  ]
+}

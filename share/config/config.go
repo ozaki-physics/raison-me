@@ -1,13 +1,17 @@
 package config
 
-// 本番(クラウド, 実データ)
+// 本番(実データ, クラウド)
 // const IsLive = true
-// const IsLocal = false
+// const IsCloud = true
 
-// 本番(ローカル, 実データ)
+// 本番(実データ, ローカル)
 // const IsLive = true
-// const IsLocal = true
+// const IsCloud = false
 
-// 開発(ローカル, テスト)
+// 開発(テストデータ, クラウド)
+// const IsLive = false
+// const IsCloud = true
+
+// 開発(テストデータ, ローカル)
 const IsLive = false
-const IsLocal = true
+const IsCloud = false
