@@ -1,0 +1,18 @@
+dispatch:
+# 意味なく明示的にしているだけ
+- url: "raison.me/*"
+  service: default
+- url: "capital.raison.me/*"
+  service: default
+- url: "delight.raison.me/*"
+  service: default
+- url: "growth.raison.me/*"
+  service: default
+- url: "info.raison.me/*"
+  service: default
+- url: "regung.raison.me/*"
+  service: default
+- url: "seed.raison.me/*"
+  service: default
+- url: "zeit.raison.me/*"
+  service: default

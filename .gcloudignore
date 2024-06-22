@@ -1,0 +1,22 @@
+README.md
+.devcontainer/
+.git/
+.github/
+.gitignore
+Dockerfile
+docker-compose.yml
+docs/
+
+# コメント
+# capital
+capital/infrastructure/cryptoAsset/json/key.json
+capital/infrastructure/share/json/key.json
+# delight
+# growth
+# info
+info/authN/domain/pepper.json
+info/authN/infra/json/user_sample.json
+info/authN/infra/json/pass_sample.json
+# regung
+# seed
+# zeit

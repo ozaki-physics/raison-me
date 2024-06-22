@@ -1,0 +1,28 @@
+{
+  "pass":[
+    {
+      "pass_id": "p-001",
+      "account_id": "a-001",
+      "password": "aaa",
+      "issued_at": "2022-12-17T12:28:00+09:00"
+    },
+    {
+      "pass_id": "p-002",
+      "account_id": "a-002",
+      "password": "bbb",
+      "issued_at": "2023-03-26T18:48:00+09:00"
+    },
+    {
+      "pass_id": "p-004",
+      "account_id": "a-004",
+      "password": "ddd",
+      "issued_at": "2024-01-04T15:53:00+09:00"
+    },
+    {
+      "pass_id": "p-003",
+      "account_id": "a-003",
+      "password": "ccc",
+      "issued_at": "2023-09-10T10:23:00+09:00"
+    }
+  ]
+}

@@ -13,3 +13,16 @@
 
 # Dependency directories (remove the comment below to include it)
 # vendor/
+
+# capital
+capital/infrastructure/cryptoAsset/json/key.json
+capital/infrastructure/share/json/key.json
+# delight
+# growth
+# info
+info/authN/domain/pepper.json
+info/authN/infra/json/user.json
+info/authN/infra/json/pass.json
+# regung
+# seed
+# zeit
