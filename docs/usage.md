@@ -77,6 +77,50 @@ go 1.19
 `docker image rm go1.19:raison_me`  
 `docker-compose build`  
 
+## Go をビルドする
+環境変数の確認  
+`go env GOOS`  
+
+実行ファイルの作成  
+`GOOS=windows GOARCH=amd64 go build -o myapp.exe main.go`  
+環境変数っぽい GOOS や GOARCH が書いてあるが 環境変数 が変わるわけではない  
+
+### 実行のやり方
+実行ファイルの起動  
+`./myapp.exe`  
+
+### 実行ファイルが Web サーバのとき
+実行ファイルが Web サーバだったときの 終了はどうしたらいいか?  
+- エクスプローラから実行ファイルを起動したら ターミナルが起動するので そのターミナルで ctrl+C やればプロセスが終わる  
+- ターミナルから実行ファイルを起動したら そのターミナルで ctrl+C でプロセス終了  
+- プロセスの kill  
+window で プロセスを確認するコマンド `tasklist | findstr "プロセス名"`  
+プロセス名 の完全一致で検索される  
+プロセス の kill 方法は `taskkill /pid プロセスID`  
+`/f` が必要と怒られた時は `taskkill /f /pid プロセスID`  
+
+## go doc の使い方
+- Go ドキュメントを見る  
+`go doc パスやパッケージ名`  
+サンプル: `go doc ./info`  
+
+- 型(構造体など) を調べる  
+`go doc パスやパッケージ名.型`  
+サンプル: `go doc ./info/authN/domain.DomainError`  
+
+- 関数 を調べる  
+`go doc パスやパッケージ名.関数のカッコなし`  
+サンプル: `go doc ./info/authN/domain.newDomainError`  
+
+オプション: `-u` パッケージプライベートも表示する  
+オプション: `-all` コメントも含めて表示する  
+
+使う順番  
+1. `go doc パスやパッケージ名` で そのパッケージの概要を掴む  
+2. `go doc -all パスやパッケージ名.型や関数` で詳細を見る  
+3. `go doc -u パスやパッケージ名` で パッケージプライベートも見る  
+4. `go doc -u -all パスやパッケージ名.型や関数` で詳細を見る  
+
 ## gcloud docker
 [GCP Container Repository](https://console.cloud.google.com/gcr/images/google.com:cloudsdktool/GLOBAL/cloud-sdk?authuser=9)をもとに pull する image を決める  
 ```bash
