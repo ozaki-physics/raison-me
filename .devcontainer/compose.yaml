@@ -1,0 +1,28 @@
+services:
+  local_dev:
+    build:
+      # この ファイルからの相対パスで書けばいいと思った
+      # context: .
+      # しかし Dockerfile では 親ディレクトリが見えないため 最初から親ディレクトリとする
+      context: ..
+      dockerfile: ./.devcontainer/Dockerfile
+    image: raison_me:local_dev
+    container_name: local_dev
+    tty: true
+    command: bash
+    ports:
+      - "127.0.0.1:5001:8081"
+      - "127.0.0.1:5002:8082"
+    volumes:
+      - ../backend/:/app/backend/:rw
+      - ../frontend/:/app/frontend/:rw
+      # コンテナ側の node_modules と ホストを同期しない
+      # node_module のファイル数が とても多いため かつ OS 依存のコードが含まれる可能性があるため
+      - raison-me-fe-node_modules:/app/frontend/raison-me-fe/node_modules
+
+volumes:
+  # このボリュームは node_modules を同期しないためのもの
+  # ボリュームの定義 を compose.yaml 内でしないと compose up するごとに ボリュームが作られてた?
+  raison-me-fe-node_modules:
+    name: raison-me-fe-node_modules
+    driver: local
