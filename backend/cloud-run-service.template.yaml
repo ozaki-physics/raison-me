@@ -1,0 +1,21 @@
+apiVersion: serving.knative.dev/v1
+kind: Service
+metadata:
+  name: ${CR_SERVICE}
+spec:
+  template:
+    metadata:
+      annotations:
+        autoscaling.knative.dev/minScale: '0'
+        autoscaling.knative.dev/maxScale: '3'
+    spec:
+      containerConcurrency: 50
+      containers:
+      - image: ${DOCKER_IMAGE}
+        resources:
+          limits:
+            cpu: 1000m
+            memory: 128Mi
+  traffic:
+  - percent: 100
+    latestRevision: true
