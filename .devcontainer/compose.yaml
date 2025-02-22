@@ -14,8 +14,9 @@ services:
       - "127.0.0.1:5001:8081"
       - "127.0.0.1:5002:8082"
     volumes:
-      - ../backend/:/app/backend/:rw
-      - ../frontend/:/app/frontend/:rw
+      # バックエンド と フロントエンド だけを マウントしてもよかったが
+      # コンテナの中で開発するため .git ディレクトリ や docs なども マウントしたくなった
+      - ../.:/app/:rw
       # コンテナ側の node_modules と ホストを同期しない
       # node_module のファイル数が とても多いため かつ OS 依存のコードが含まれる可能性があるため
       - raison-me-fe-node_modules:/app/frontend/raison-me-fe/node_modules

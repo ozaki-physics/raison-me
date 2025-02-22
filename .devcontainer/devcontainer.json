@@ -5,9 +5,9 @@
     "compose.yaml"
   ],
   // 'service' プロパティは、VS Code が使用すべきコンテナのサービス名
-	"service": "raison_me",
+	"service": "local_dev",
   // VS Code が接続時にデフォルトで開くパス
-	"workspaceFolder": "/go/src/github.com/ozaki-physics/raison-me",
+	"workspaceFolder": "/app",
   "customizations": {
     "vscode": {
       // コンテナ内の VS Code で使いたい拡張機能
