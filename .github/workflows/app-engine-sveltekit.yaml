@@ -1,0 +1,66 @@
+name: SvelteKit を Build して App Engine に Deploy する
+
+on:
+  # push されたとき
+  # push:
+  #   branches: 
+  #     - "main"
+  # 手動
+  workflow_dispatch:
+    inputs:
+      branch:
+        # ブランチを選択するオプション
+        description: 'Branch to deploy'
+        required: true
+        # デフォルトは develop ブランチ
+        default: 'develop'
+
+# デプロイ先が テスト環境 or 本番環境 で 異なるため
+# Environment ごとに secret を設定(variables じゃない)
+# repository secrets に書くと repository 全体で 共有できる
+
+# secrets に設定する値
+# - GCP_PROJECT_ID: Google Cloud プロジェクト ID
+# - WIF_PROVIDER: Workload Identity 連携 のプロバイダ
+# - WIF_SERVICE_ACCOUNT: Workload Identity 連携 の サービスアカウント
+
+jobs:
+  deploy:
+    name: デプロイの job
+    environment: test-env
+    runs-on: ubuntu-latest
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
+    steps:
+      - name: コードの Checkout
+        id: checkout
+        uses: actions/checkout@v4
+
+      - name: Google Auth を行う
+        id: auth
+        uses: 'google-github-actions/auth@v2'
+        with:
+          token_format: 'access_token'
+          workload_identity_provider: '${{ secrets.WIF_PROVIDER }}'
+          service_account: '${{ secrets.WIF_SERVICE_ACCOUNT }}'
+
+      - name: Cloud SDK をセットアップ
+        id: setup-gcloud
+        uses: 'google-github-actions/setup-gcloud@v2'
+
+      - name: gcloud の確認
+        id: gcloud-check
+        run: |-
+          gcloud version
+
+      - name: App Engine に Deploy する
+        id: deploy-to-app-engine
+        run: |-
+          gcloud app deploy ./frontend/local_test_svelte/app.yaml --format json --project ${{ secrets.GCP_PROJECT_ID }} --promote --quiet
+
+      # 必要に応じて、後続のステップで Cloud Run の URL 出力を使用
+      - name: App Engine の URL 出力
+        id: show-output
+        run: echo ${{ steps.deploy-to-app-engine.outputs.version_url }}
