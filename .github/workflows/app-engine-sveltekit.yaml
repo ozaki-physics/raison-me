@@ -12,8 +12,6 @@ on:
         # ブランチを選択するオプション
         description: 'Branch to deploy'
         required: true
-        # デフォルトは develop ブランチ
-        default: 'develop'
 
 # デプロイ先が テスト環境 or 本番環境 で 異なるため
 # Environment ごとに secret を設定(variables じゃない)
@@ -58,7 +56,7 @@ jobs:
       - name: App Engine に Deploy する
         id: deploy-to-app-engine
         run: |-
-          gcloud app deploy ./frontend/local_test_svelte/app.yaml --format json --project ${{ secrets.GCP_PROJECT_ID }} --promote --quiet
+          gcloud app deploy ./frontend/raison-me-fe/app.yaml --format json --project ${{ secrets.GCP_PROJECT_ID }} --promote --quiet
 
       # 必要に応じて、後続のステップで Cloud Run の URL 出力を使用
       - name: App Engine の URL 出力

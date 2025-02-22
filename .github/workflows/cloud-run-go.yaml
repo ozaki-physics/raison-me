@@ -12,8 +12,6 @@ on:
         # ブランチを選択するオプション
         description: 'Branch to deploy'
         required: true
-        # デフォルトは develop ブランチ
-        default: 'develop'
 
 # デプロイ先が テスト環境 or 本番環境 で 異なるため
 # Environment ごとに secret を設定(variables じゃない)
