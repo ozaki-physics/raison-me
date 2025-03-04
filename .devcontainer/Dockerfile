@@ -1,6 +1,6 @@
 # サポート期間: 2025-08-xx まで
 # https://go.dev/doc/devel/release
-FROM golang:1.23 AS golang
+FROM golang:1.24 AS golang
 # サポート期間: 2025-10-xx まで (最大 2027-04-30)
 # https://nodejs.org/en/about/previous-releases
 FROM node:22 AS nodejs
