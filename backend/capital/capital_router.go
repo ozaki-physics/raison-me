@@ -9,7 +9,7 @@ import (
 	share "github.com/ozaki-physics/raison-me/capital/infrastructure/share"
 	presen "github.com/ozaki-physics/raison-me/capital/presentation/cryptoAsset"
 	usecase "github.com/ozaki-physics/raison-me/capital/usecase/cryptoAsset"
-	"github.com/ozaki-physics/raison-me/share/config"
+	global_config "github.com/ozaki-physics/raison-me/share/config"
 )
 
 // capital サービス を統括するルータ
@@ -26,7 +26,9 @@ func Router() chi.Router {
 
 // CryptoAsset コンテキスト を統括するルータ
 func routerCryptoAsset() chi.Router {
-	cmcCredential := infra.CreateCredentialCoinMarketCapGcp(config.IsLive)
+	appConfig := global_config.NewConfig()
+
+	cmcCredential := infra.CreateCredentialCoinMarketCapGcp(appConfig.IsLive())
 	cmcIds := infra.CreateCMCIdsJson()
 	coinRepo := infra.CreateCoinRepository(cmcCredential, cmcIds)
 	transactionRepo := infra.CreateTransactionRepository()
@@ -42,7 +44,7 @@ func routerCryptoAsset() chi.Router {
 	})
 
 	r.HandleFunc("/price", apiHandler.Handler)
-	if config.IsLive {
+	if appConfig.IsLive() {
 		lineCredential := share.CreateCredentialLineGcp()
 		lineController := presen.CreateLineController(lineCredential, cryptoAssetUsecase)
 		r.HandleFunc("/line", lineController.SoundReflection)

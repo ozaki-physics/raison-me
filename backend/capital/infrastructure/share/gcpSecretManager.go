@@ -6,7 +6,7 @@ import (
 	"strconv"
 
 	secretManager "cloud.google.com/go/secretmanager/apiv1"
-	secretManagerPB "google.golang.org/genproto/googleapis/cloud/secretmanager/v1"
+	secretManagerPB "cloud.google.com/go/secretmanager/apiv1/secretmanagerpb"
 )
 
 const (

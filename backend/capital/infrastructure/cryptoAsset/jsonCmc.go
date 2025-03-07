@@ -13,13 +13,13 @@ type dataCoinMarketCap struct {
 
 func CreateCredentialCoinMarketCapJson(isLive bool) CredentialCmc {
 	// Sandbox モード
-	if isLive == false {
+	if !isLive {
 		return &cmcDto{sandboxBaseEndpoint, sandboxAPIKey}
 	}
 
 	// Live モード
 	var d dataCoinMarketCap
-	share.JsonToStruct(d, "./capital/infrastructure/cryptoAsset/json/key.json")
+	share.JsonToStruct(d, "./capital/infrastructure/cryptoAsset/json/CoinMarketCap_key.json")
 	return &cmcDto{liveBaseEndpoint, d.Data.Service.ApiKey}
 
 }

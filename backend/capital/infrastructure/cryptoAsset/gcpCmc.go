@@ -8,7 +8,7 @@ import (
 
 func CreateCredentialCoinMarketCapGcp(isLive bool) CredentialCmc {
 	// Sandbox モード
-	if isLive == false {
+	if !isLive {
 		return &cmcDto{sandboxBaseEndpoint, sandboxAPIKey}
 	}
 
