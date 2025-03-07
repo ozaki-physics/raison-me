@@ -15,6 +15,7 @@
 # vendor/
 
 # key になりそうな json ファイル は 除外
+# Cloud で動かすときは Secret Manager から取得すればいいから
 *key.json
 # persist は ローカル で DB の代わり に使う json
 *_persist.json

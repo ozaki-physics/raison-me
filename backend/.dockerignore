@@ -1,3 +1,11 @@
-app.yaml
 cloud-run-service.template.yaml
 Dockerfile
+.gitignore
+
+# key になりそうな json ファイル は 除外
+# Cloud で動かすときは Secret Manager から取得すればいいから
+*key.json
+# persist は ローカル で DB の代わり に使う json
+*_persist.json
+# ただし サンプル になる json ファイル は git 管理する
+!*example.json
