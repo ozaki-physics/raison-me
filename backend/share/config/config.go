@@ -1,0 +1,82 @@
+package config
+
+type Config interface {
+	IsLive() bool
+	IsCloud() bool
+}
+
+const (
+	ProductionCloud = iota
+	ProductionLocal
+	DevelopmentCloud
+	DevelopmentLocal
+)
+
+func NewConfig(runMode int) Config {
+	switch runMode {
+	case ProductionCloud:
+		return newProductionCloudConfig()
+	case ProductionLocal:
+		return newProductionLocalConfig()
+	case DevelopmentCloud:
+		return newDevelopmentCloudConfig()
+	case DevelopmentLocal:
+		return newDevelopmentLocalConfig()
+	default:
+		return newDevelopmentLocalConfig()
+	}
+}
+
+type config struct {
+	runMode int
+	isLive  bool
+	isCloud bool
+}
+
+func (c *config) IsLive() bool {
+	return c.isLive
+}
+
+func (c *config) IsCloud() bool {
+	return c.isCloud
+}
+
+// 本番(実データ, クラウド)
+func newProductionCloudConfig() *config {
+	c := &config{
+		runMode: ProductionCloud,
+		isLive:  true,
+		isCloud: true,
+	}
+	return c
+}
+
+// 本番(実データ, ローカル)
+func newProductionLocalConfig() *config {
+	c := &config{
+		runMode: ProductionLocal,
+		isLive:  true,
+		isCloud: false,
+	}
+	return c
+}
+
+// 開発(テストデータ, クラウド)
+func newDevelopmentCloudConfig() *config {
+	c := &config{
+		runMode: DevelopmentCloud,
+		isLive:  false,
+		isCloud: true,
+	}
+	return c
+}
+
+// 開発(テストデータ, ローカル)
+func newDevelopmentLocalConfig() *config {
+	c := &config{
+		runMode: DevelopmentLocal,
+		isLive:  false,
+		isCloud: false,
+	}
+	return c
+}

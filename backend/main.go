@@ -13,12 +13,16 @@ import (
 	"github.com/ozaki-physics/raison-me/info"
 	"github.com/ozaki-physics/raison-me/regung"
 	"github.com/ozaki-physics/raison-me/seed"
+	"github.com/ozaki-physics/raison-me/share/config"
 	"github.com/ozaki-physics/raison-me/zeit"
 )
 
 func main() {
 	// fmt.Println("hello world!")
 	// helloworld.Main()
+
+	AppConfig := config.NewConfig(config.DevelopmentLocal)
+	log.Printf("AppConfig: %v", AppConfig)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
