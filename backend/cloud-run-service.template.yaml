@@ -17,7 +17,11 @@ spec:
       containers:
       - image: ${DOCKER_IMAGE}
         ports:
-        - containerPort: ${CR_PORT}
+        - name: http1
+          containerPort: ${CR_PORT}
+        env:
+        - name: IS_CLOUD
+          value: 'true'
         resources:
           limits:
             cpu: 1000m
