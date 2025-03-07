@@ -23,6 +23,8 @@ func main() {
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 
+	// 静的ファイル の 配信
+	r.Mount("/", staticFileRouter())
 	// 直接 / だけでアクセスされたときは 意図的に まだ 404 にしておく
 	r.Handle("/", http.HandlerFunc(http.NotFound))
 
@@ -46,4 +48,11 @@ func main() {
 	if err := http.ListenAndServe(":"+port, r); err != nil {
 		log.Fatal("ListenAndServe", err)
 	}
+}
+
+// 静的ファイル の 配信をする Router
+func staticFileRouter() chi.Router {
+	r := chi.NewRouter()
+	r.Mount("/", http.FileServer(http.Dir("web")))
+	return r
 }
