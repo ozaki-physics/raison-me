@@ -18,6 +18,8 @@ RUN go build -o main main.go
 # 実行ステージ
 FROM debian:stable-slim
 
+# Cloud Run が 8080 ポートでリクエストを待つため 環境変数を設定
+ENV PORT=8080
 WORKDIR /app
 
 # なぜか path を通さないとエラーになった
