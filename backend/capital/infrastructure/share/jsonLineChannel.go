@@ -12,7 +12,7 @@ type dataLineChannel struct {
 
 func CreateCredentialLineJson() CredentialLine {
 	var d dataLineChannel
-	JsonToStruct(d, "./capital/infrastructure/share/json/key.json")
+	JsonToStruct(d, "./capital/infrastructure/share/json/LINE_Channel_key.json")
 	return &lineDto{
 		d.Data.Service.Secret,
 		d.Data.Service.Token,

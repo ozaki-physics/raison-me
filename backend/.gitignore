@@ -15,7 +15,7 @@
 # vendor/
 
 # key になりそうな json ファイル は 除外
-*key*.json
+*key.json
 # persist は ローカル で DB の代わり に使う json
 *_persist.json
 # ただし サンプル になる json ファイル は git 管理する

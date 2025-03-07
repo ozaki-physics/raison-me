@@ -3,7 +3,7 @@ package cryptoasset
 import (
 	"encoding/json"
 	"errors"
-	"io/ioutil"
+	"io"
 	"log"
 	"net/http"
 	"net/url"
@@ -160,10 +160,11 @@ func (c *coinInfra) getQuotesLatest(cmcIdsParam *[]int) []cmcPriceDto {
 	// ステータスコードを確認
 	log.Println(resp.Status)
 	// ResponseBody を取り出す
-	respBody, err := ioutil.ReadAll(resp.Body)
+	respBody, err := io.ReadAll(resp.Body)
 	if err != nil {
 		log.Println(err)
 	}
+	defer resp.Body.Close()
 
 	// JSON にして出力してみる
 	// 動的な key と status を削ったレスポンス

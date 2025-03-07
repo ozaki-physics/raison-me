@@ -12,7 +12,9 @@ const (
 	DevelopmentLocal
 )
 
-func NewConfig(runMode int) Config {
+const runMode = DevelopmentLocal
+
+func NewConfig() Config {
 	switch runMode {
 	case ProductionCloud:
 		return newProductionCloudConfig()
