@@ -7,6 +7,7 @@ import (
 	"os"
 
 	domain "github.com/ozaki-physics/raison-me/capital/domain/cryptoAsset"
+	infra "github.com/ozaki-physics/raison-me/capital/infrastructure"
 )
 
 // dataTransaction JSON から struct に変換する
@@ -37,8 +38,9 @@ type transactionInfra struct {
 func CreateTransactionRepository() domain.TransactionRepository {
 	// 何度も JSON を読み込まなくていいように インスタンス変数に格納しておく
 
+	persist := infra.NewConfig()
 	// 取引履歴を読み込む
-	bytes, err := os.ReadFile("./capital/infrastructure/cryptoAsset/json/transaction.json")
+	bytes, err := os.ReadFile(persist.GetTransaction())
 	if err != nil {
 		log.Fatalln(err)
 	}

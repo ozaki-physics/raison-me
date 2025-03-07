@@ -1,5 +1,7 @@
 package config
 
+import "os"
+
 type Config interface {
 	IsLive() bool
 	IsCloud() bool
@@ -40,6 +42,8 @@ func (c *config) IsLive() bool {
 }
 
 func (c *config) IsCloud() bool {
+	// TODO: 無理やり環境変数から取得している
+	c.isCloud = os.Getenv("IS_CLOUD") == "true"
 	return c.isCloud
 }
 
