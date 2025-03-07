@@ -38,12 +38,18 @@ type config struct {
 }
 
 func (c *config) IsLive() bool {
+	// TODO: 無理やり環境変数から取得している
+	if os.Getenv("IS_LIVE") == "true" {
+		return true
+	}
 	return c.isLive
 }
 
 func (c *config) IsCloud() bool {
 	// TODO: 無理やり環境変数から取得している
-	c.isCloud = os.Getenv("IS_CLOUD") == "true"
+	if os.Getenv("IS_CLOUD") == "true" {
+		return true
+	}
 	return c.isCloud
 }
 
