@@ -79,8 +79,9 @@ jobs:
         run: |-
           export DOCKER_IMAGE="${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REPO_NAME }}/${{ secrets.GCR_SERVICE_NAME }}:${{ github.sha }}"
           export CR_SERVICE="${{ secrets.GCR_SERVICE_NAME }}"
-          export CR_REGION="${{ secrets.GCR_REGION }}"
           export CR_PORT="${{ secrets.GCR_PORT }}"
+          export CR_SERVICE_ACCOUNT="${{ secrets.GCR_SERVICE_ACCOUNT }}"
+          export GCP_PROJECT_ID="${{ secrets.GCP_PROJECT_ID }}"
           envsubst < ./backend/cloud-run-service.template.yaml > cloud-run-service.yaml
         # envsubst で 環境変数 を テンプレート に 埋め込んで cloud-run-service.yaml を 作成
 
@@ -88,9 +89,10 @@ jobs:
         id: deploy-to-cloud-run
         uses: google-github-actions/deploy-cloudrun@v2
         with:
-          service: ${{ secrets.GCR_SERVICE_NAME }}
-          region: ${{ secrets.GCR_REGION }}
+          # metadata を 使う場合は 他に with の 項目(service, region など) は 無視される
           metadata: cloud-run-service.yaml
+          # Cloud Run を 初めて作るときは必要になるかもだから 登録しておく
+          region: ${{ secrets.GCR_REGION }}
           # 注: 事前にビルドされたイメージを使用する場合、ここでイメージ名を更新
           # image: ${{ secrets.GAR_LOCATION }}-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/${{ secrets.ARTIFACT_REPO_NAME }}/${{ secrets.GCR_SERVICE_NAME }}:${{ github.sha }}
 
