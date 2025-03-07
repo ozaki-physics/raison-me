@@ -5,6 +5,7 @@ import "os"
 type Config interface {
 	IsLive() bool
 	IsCloud() bool
+	GetGCPProjectID() string
 }
 
 const (
@@ -14,7 +15,7 @@ const (
 	DevelopmentLocal
 )
 
-const runMode = DevelopmentLocal
+const runMode = DevelopmentCloud
 
 func NewConfig() Config {
 	switch runMode {
@@ -32,9 +33,10 @@ func NewConfig() Config {
 }
 
 type config struct {
-	runMode int
-	isLive  bool
-	isCloud bool
+	runMode      int
+	isLive       bool
+	isCloud      bool
+	gcpProjectID string
 }
 
 func (c *config) IsLive() bool {
@@ -53,12 +55,21 @@ func (c *config) IsCloud() bool {
 	return c.isCloud
 }
 
+func (c *config) GetGCPProjectID() string {
+	tmp := os.Getenv("GCP_PROJECT_ID")
+	if tmp != "" {
+		return tmp
+	}
+	return c.gcpProjectID
+}
+
 // 本番(実データ, クラウド)
 func newProductionCloudConfig() *config {
 	c := &config{
-		runMode: ProductionCloud,
-		isLive:  true,
-		isCloud: true,
+		runMode:      ProductionCloud,
+		isLive:       true,
+		isCloud:      true,
+		gcpProjectID: "raison-me",
 	}
 	return c
 }
@@ -66,9 +77,10 @@ func newProductionCloudConfig() *config {
 // 本番(実データ, ローカル)
 func newProductionLocalConfig() *config {
 	c := &config{
-		runMode: ProductionLocal,
-		isLive:  true,
-		isCloud: false,
+		runMode:      ProductionLocal,
+		isLive:       true,
+		isCloud:      false,
+		gcpProjectID: "",
 	}
 	return c
 }
@@ -76,9 +88,10 @@ func newProductionLocalConfig() *config {
 // 開発(テストデータ, クラウド)
 func newDevelopmentCloudConfig() *config {
 	c := &config{
-		runMode: DevelopmentCloud,
-		isLive:  false,
-		isCloud: true,
+		runMode:      DevelopmentCloud,
+		isLive:       false,
+		isCloud:      true,
+		gcpProjectID: "smart-ruler-277318",
 	}
 	return c
 }
@@ -86,9 +99,10 @@ func newDevelopmentCloudConfig() *config {
 // 開発(テストデータ, ローカル)
 func newDevelopmentLocalConfig() *config {
 	c := &config{
-		runMode: DevelopmentLocal,
-		isLive:  false,
-		isCloud: false,
+		runMode:      DevelopmentLocal,
+		isLive:       false,
+		isCloud:      false,
+		gcpProjectID: "",
 	}
 	return c
 }

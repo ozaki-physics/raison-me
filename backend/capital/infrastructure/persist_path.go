@@ -10,9 +10,9 @@ type Persist_path interface {
 }
 
 func NewConfig() Persist_path {
-	appConfig := c.NewConfig()
+	globalConfig := c.NewConfig()
 
-	if appConfig.IsCloud() {
+	if globalConfig.IsCloud() {
 		return &config{
 			coinMarketCapId: "./persist/coinMarketCapId.json",
 			transaction:     "./persist/transaction.json",
