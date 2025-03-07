@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"os"
+
+	infra "github.com/ozaki-physics/raison-me/capital/infrastructure"
 )
 
 // dataCMCIds JSON から struct に変換する
@@ -17,8 +19,9 @@ type dataCMCIds struct {
 func CreateCMCIdsJson() CMCIds {
 	// 何度も JSON を読み込まなくていいように インスタンス変数に格納しておく
 
+	persist := infra.NewConfig()
 	// apiKey を読み込む
-	bytes, err := os.ReadFile("./capital/infrastructure/cryptoAsset/json/coinMarketCapId.json")
+	bytes, err := os.ReadFile(persist.GetCoinMarketCapId())
 	if err != nil {
 		log.Fatalln(err)
 	}
