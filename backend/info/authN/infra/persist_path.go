@@ -21,8 +21,8 @@ func NewStoragePath() storagePath {
 	if globalConfig.IsCloud() {
 		if globalConfig.IsLive() {
 			return storagePath{
-				userJSON: "./persist/user.json",
-				passJSON: "./persist/pass.json",
+				userJSON: "./persist/user_persist.json",
+				passJSON: "./persist/pass_persist.json",
 			}
 		} else {
 			return storagePath{
@@ -33,8 +33,8 @@ func NewStoragePath() storagePath {
 	} else {
 		if globalConfig.IsLive() {
 			return storagePath{
-				userJSON: "info/authN/infra/json/user.json",
-				passJSON: "info/authN/infra/json/pass.json",
+				userJSON: "info/authN/infra/json/user_persist.json",
+				passJSON: "info/authN/infra/json/pass_persist.json",
 			}
 		} else {
 			return storagePath{
