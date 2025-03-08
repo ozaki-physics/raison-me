@@ -18,6 +18,10 @@ RUN go build -o main main.go
 # 実行ステージ
 FROM debian:stable-slim
 
+RUN apt-get update && \
+    apt-get install -y \
+    ca-certificates
+
 WORKDIR /app
 
 # なぜか path を通さないとエラーになった
