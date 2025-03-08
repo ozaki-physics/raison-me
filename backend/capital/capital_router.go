@@ -26,9 +26,9 @@ func Router() chi.Router {
 
 // CryptoAsset コンテキスト を統括するルータ
 func routerCryptoAsset() chi.Router {
-	appConfig := global_config.NewConfig()
+	globalConfig := global_config.NewConfig()
 
-	cmcCredential := infra.CreateCredentialCoinMarketCapGcp(appConfig.IsLive())
+	cmcCredential := infra.CreateCredentialCoinMarketCapGcp(globalConfig.IsLive())
 	cmcIds := infra.CreateCMCIdsJson()
 	coinRepo := infra.CreateCoinRepository(cmcCredential, cmcIds)
 	transactionRepo := infra.CreateTransactionRepository()
@@ -44,7 +44,7 @@ func routerCryptoAsset() chi.Router {
 	})
 
 	r.HandleFunc("/price", apiHandler.Handler)
-	if appConfig.IsLive() {
+	if globalConfig.IsCloud() {
 		lineCredential := share.CreateCredentialLineGcp()
 		lineController := presen.CreateLineController(lineCredential, cryptoAssetUsecase)
 		r.HandleFunc("/line", lineController.SoundReflection)

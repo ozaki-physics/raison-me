@@ -21,8 +21,8 @@ func main() {
 	// fmt.Println("hello world!")
 	// helloworld.Main()
 
-	AppConfig := globalConfig.NewConfig()
-	log.Printf("AppConfig: %v", AppConfig)
+	globalConfig := globalConfig.NewConfig()
+	log.Printf("globalConfig: %v", globalConfig)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)

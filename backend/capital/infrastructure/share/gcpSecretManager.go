@@ -7,10 +7,7 @@ import (
 
 	secretManager "cloud.google.com/go/secretmanager/apiv1"
 	secretManagerPB "cloud.google.com/go/secretmanager/apiv1/secretmanagerpb"
-)
-
-const (
-	GCPProjectID = "raison-me"
+	global_config "github.com/ozaki-physics/raison-me/share/config"
 )
 
 func GcpSecretValue(name string, version int) (string, error) {
@@ -21,7 +18,8 @@ func GcpSecretValue(name string, version int) (string, error) {
 	}
 	defer client.Close()
 
-	fullName := "projects/" + GCPProjectID + "/secrets/" + name + "/versions/" + strconv.Itoa(version)
+	globalConfig := global_config.NewConfig()
+	fullName := "projects/" + globalConfig.GetGCPProjectID() + "/secrets/" + name + "/versions/" + strconv.Itoa(version)
 	req := &secretManagerPB.AccessSecretVersionRequest{
 		Name: fullName,
 	}
