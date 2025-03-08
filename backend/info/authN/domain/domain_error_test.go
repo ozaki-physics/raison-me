@@ -120,7 +120,7 @@ func TestWrapDomainError(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			e := fmt.Errorf(tt.args.msg01)
+			e := fmt.Errorf("%s", tt.args.msg01)
 			got := domain.WrapDomainError(tt.args.msg02, e)
 			got2 := fmt.Errorf("ラップ: %w", got)
 			got3 := fmt.Errorf("ラップ: %w", got2)
