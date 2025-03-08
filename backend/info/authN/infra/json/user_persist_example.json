@@ -1,0 +1,14 @@
+{
+  "user": [
+    {
+      "account_id": 1,
+      "id": "ozaki",
+      "name": "オザキ"
+    },
+    {
+      "account_id": 2,
+      "id": "sena",
+      "name": "セナ"
+    }
+  ]
+}

@@ -22,11 +22,11 @@ type credentialRepoFetch interface {
 }
 
 // 更新する
-type credentialRepoUpdate interface {
-	Update(c *Credential) (*Credential, DomainError)
-}
+// type credentialRepoUpdate interface {
+// 	Update(c *Credential) (*Credential, DomainError)
+// }
 
 // 削除する
-type credentialRepoDelete interface {
-	Delete(accountID AccountID) DomainError
-}
+// type credentialRepoDelete interface {
+// 	Delete(accountID AccountID) DomainError
+// }
