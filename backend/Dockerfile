@@ -35,7 +35,7 @@ COPY --from=builder /backend/capital/infrastructure/cryptoAsset/json/coinMarketC
 COPY --from=builder /backend/capital/infrastructure/cryptoAsset/json/transaction.json /app/persist/transaction.json
 COPY --from=builder /backend/info/authN/infra/json/user_example.json /app/persist/user_example.json
 COPY --from=builder /backend/info/authN/infra/json/pass_example.json /app/persist/pass_example.json
-COPY --from=builder /backend/info/authN/infra/json/user_persist.json /app/persist/user_persist.json
-COPY --from=builder /backend/info/authN/infra/json/pass_persist.json /app/persist/pass_persist.json
+COPY --from=builder /backend/info/authN/infra/json/user_persist_example.json /app/persist/user_persist_example.json
+COPY --from=builder /backend/info/authN/infra/json/pass_persist_example.json /app/persist/pass_persist_example.json
 
 CMD ["./main"]
