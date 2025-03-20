@@ -1,0 +1,12 @@
+{
+  "credential": [
+    {
+      "id": 1,
+      "account_id": "a-001",
+      "token": "xxx",
+      "expiration_time": "2023/12/31 00:00",
+      "issuer": "home",
+      "issued_at": "2022/12/17 12:28"
+    }
+  ]
+}

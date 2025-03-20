@@ -35,6 +35,14 @@ func NewID(prefixID string) (id, DomainError) {
 func ReNewID(data string) (id, DomainError) {
 	sp := strings.Split(data, "-")
 	var val string
+
+	// 本来は 値オブジェクトが作れた時点で不整合な状態にはならないから
+	// 復元するときにも不整合な状態は発生しないはず
+	// もしも ストレージに直接 ID を書き込んで それが不整合だったときを考える
+	if len(sp) == 1 {
+		return NilID(), NewDomainError("ストレージのIDフォーマットが不正です")
+	}
+
 	if len(sp) >= 3 {
 		val = strings.Join(sp[1:], "-")
 	} else {

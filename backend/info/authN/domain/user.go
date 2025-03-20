@@ -37,6 +37,7 @@ func ReNewUser(accountID string, userID string, name string) (*User, DomainError
 	uName, err03 := NewUserName(name)
 	errs = append(errs, err03)
 
+	// TODO: 最初に発生したエラー以外も検知できるようにしたい
 	for _, v := range errs {
 		if v != nil {
 			return nil, v

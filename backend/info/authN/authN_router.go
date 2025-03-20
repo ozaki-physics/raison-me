@@ -7,6 +7,9 @@ import (
 
 	"github.com/go-chi/chi/v5"
 	"github.com/ozaki-physics/raison-me/info/authN/infra"
+	"github.com/ozaki-physics/raison-me/info/authN/presen"
+	"github.com/ozaki-physics/raison-me/info/authN/usecase"
+	"github.com/ozaki-physics/raison-me/share"
 )
 
 // AuthN コンテキスト を統括するルータ
@@ -18,6 +21,25 @@ func Router() chi.Router {
 	})
 
 	r.Get("/user", SearchUser)
+
+	// DI のイメージ?
+	// TODO: 用途不明
+	userRepo, _ := infra.NewUserRepoJSON()
+	credentialRepo, _ := infra.NewCredentialRepoJSON()
+	cryptoRepo, _ := infra.NewCryptoRepoJSON()
+	userUsecase, _ := usecase.NewUser(userRepo, cryptoRepo)
+	credentialUsecase, _ := usecase.NewCredential(credentialRepo, cryptoRepo)
+	api := presen.NewAPICase(userUsecase, credentialUsecase)
+
+	// TODO: 用途不明
+	r.Route("/entry", func(r chi.Router) {
+		r.Get("/", share.NewApiHandler(api.UserCreate).Handler)
+		r.Post("/", share.NewApiHandler(api.UserEntry).Handler)
+	})
+	r.Route("/token", func(r chi.Router) {
+		r.Post("/", share.NewApiHandler(api.IDTokenGenerate).Handler)
+	})
+
 	return r
 }
 

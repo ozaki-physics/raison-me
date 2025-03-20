@@ -22,6 +22,7 @@ type credentialRepoFetch interface {
 }
 
 // 更新する
+// ドメイン知識的に トークンは更新じゃなくて 再作成がよいかも
 // type credentialRepoUpdate interface {
 // 	Update(c *Credential) (*Credential, DomainError)
 // }

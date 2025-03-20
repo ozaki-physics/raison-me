@@ -44,6 +44,7 @@ func ReNewPass(passID string, accountID string, password string, iat string) (*P
 	at, err04 := ReNewDate(iat)
 	errs = append(errs, err04)
 
+	// TODO: 最初に発生したエラー以外も検知できるようにしたい
 	for _, v := range errs {
 		if v != nil {
 			return nil, v
