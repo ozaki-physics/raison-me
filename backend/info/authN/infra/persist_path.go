@@ -65,3 +65,8 @@ func (s *storagePath) GetUser() int {
 
 	return len(users.User)
 }
+
+// TODO: 用途不明
+func (s *storagePath) GetUserPath() string {
+	return s.userJSON
+}
