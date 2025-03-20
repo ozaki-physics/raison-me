@@ -1,0 +1,29 @@
+# Binaries for programs and plugins
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+# Test binary, built with `go test -c`
+*.test
+
+# Output of the go coverage tool, specifically when used with LiteIDE
+*.out
+
+# Dependency directories (remove the comment below to include it)
+# vendor/
+
+# 追加
+.gitignore
+Dockerfile
+.dockerignore
+cloud-run-service.template.yaml
+
+# key になりそうな json ファイル は 除外
+# Cloud で動かすときは Secret Manager から取得すればいいから
+*key.json
+# persist は ローカル で DB の代わり に使う json
+*_persist.json
+# ただし サンプル になる json ファイル は git 管理する
+!*example.json
