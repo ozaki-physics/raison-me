@@ -8,6 +8,10 @@ services:
       dockerfile: ./.devcontainer/Dockerfile
     image: raison_me:local_dev
     container_name: local_dev
+    environment:
+      # BigQuery にローカルから接続するために サービスアカウント の key を使う
+      # これで BigQuery の SDK で 自動でこの認証を使ってくれる
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/backend/trybigquery/smart-ruler-277318-e68077580ad1_key.json
     tty: true
     command: bash
     ports:

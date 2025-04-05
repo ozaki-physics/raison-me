@@ -14,6 +14,7 @@ import (
 	"github.com/ozaki-physics/raison-me/regung"
 	"github.com/ozaki-physics/raison-me/seed"
 	globalConfig "github.com/ozaki-physics/raison-me/share/config"
+	"github.com/ozaki-physics/raison-me/trybigquery"
 	"github.com/ozaki-physics/raison-me/zeit"
 )
 
@@ -21,6 +22,11 @@ func main() {
 	// fmt.Println("hello world!")
 	// helloworld.Main()
 
+	trybigquery.Main()
+	// Run()
+}
+
+func Run() {
 	globalConfig := globalConfig.NewConfig()
 	log.Printf("globalConfig: %v", globalConfig)
 
