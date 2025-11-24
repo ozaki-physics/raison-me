@@ -1,0 +1,3 @@
+# 将来 コンテナごとに git 管理する場合のために ignore ファイルを用意しておく
+.env
+!.env.example
