@@ -1,5 +1,7 @@
 # 使い方 Usage
 ## Remote - Containers
+[2025-11-16 時点の 環境起動方法](../db/docs/memo.md)
+
 VS Code の拡張機能 Remote - Containers(識別子: ms-vscode-remote.remote-containers) を使って開発する  
 コンテナ内で VS Code を起動し go 言語のための VS Code の拡張機能 Go(識別子: golang.go) を使う  
 [golang.go](https://marketplace.visualstudio.com/items?itemName=golang.Go)  
