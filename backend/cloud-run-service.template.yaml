@@ -38,45 +38,35 @@ spec:
         # ボリューム を マウント する(場所 と ボリューム の対応)
         volumeMounts:
         # /app は Cloud Run 用 の Dockerfile で 作成 した ディレクトリ
-        - mountPath: /app/share/secrets/IS_LIVE
+        - mountPath: /app/share/secrets
           name: volume-IS_LIVE
-          subPath: IS_LIVE
           readOnly: true
-        - mountPath: /app/share/secrets/COIN_MARKET_CAP_API_KEY_LIVE
+        - mountPath: /app/share/secrets
           name: volume-COIN_MARKET_CAP_API_KEY_LIVE
-          subPath: COIN_MARKET_CAP_API_KEY_LIVE
           readOnly: true
-        - mountPath: /app/share/secrets/COIN_MARKET_CAP_API_KEY_SANDBOX
+        - mountPath: /app/share/secrets
           name: volume-COIN_MARKET_CAP_API_KEY_SANDBOX
-          subPath: COIN_MARKET_CAP_API_KEY_SANDBOX
           readOnly: true
-        - mountPath: /app/share/secrets/COIN_MARKET_CAP_API_URL_LIVE
+        - mountPath: /app/share/secrets
           name: volume-COIN_MARKET_CAP_API_URL_LIVE
-          subPath: COIN_MARKET_CAP_API_URL_LIVE
           readOnly: true
-        - mountPath: /app/share/secrets/COIN_MARKET_CAP_API_URL_SANDBOX
+        - mountPath: /app/share/secrets
           name: volume-COIN_MARKET_CAP_API_URL_SANDBOX
-          subPath: COIN_MARKET_CAP_API_URL_SANDBOX
           readOnly: true
-        - mountPath: /app/share/secrets/DATABASE_SUPABASE_JSON
+        - mountPath: /app/share/secrets
           name: volume-DATABASE_SUPABASE_JSON
-          subPath: DATABASE_SUPABASE_JSON
           readOnly: true
-        - mountPath: /app/share/secrets/DATABASE_URL
+        - mountPath: /app/share/secrets
           name: volume-DATABASE_URL
-          subPath: DATABASE_URL
           readOnly: true
-        - mountPath: /app/share/secrets/GCP_PROJECT_ID
+        - mountPath: /app/share/secrets
           name: volume-GCP_PROJECT_ID
-          subPath: GCP_PROJECT_ID
           readOnly: true
-        - mountPath: /app/share/secrets/LINE_CHANNEL_SECRET
+        - mountPath: /app/share/secrets
           name: volume-LINE_CHANNEL_SECRET
-          subPath: LINE_CHANNEL_SECRET
           readOnly: true
-        - mountPath: /app/share/secrets/LINE_CHANNEL_TOKEN
+        - mountPath: /app/share/secrets
           name: volume-LINE_CHANNEL_TOKEN
-          subPath: LINE_CHANNEL_TOKEN
           readOnly: true
       # Secret Manager から 取得 した シークレット を マウント するため
       volumes:
