@@ -38,37 +38,40 @@ spec:
         # ボリューム を マウント する(場所 と ボリューム の対応)
         volumeMounts:
         # /app は Cloud Run 用 の Dockerfile で 作成 した ディレクトリ
-        - mountPath: /app/share/secrets
+        - mountPath: /app/share/secrets/IS_LIVE
           name: volume-IS_LIVE
           readOnly: true
-        - mountPath: /app/share/secrets
+        - mountPath: /app/share/secrets/COIN_MARKET_CAP_API_KEY_LIVE
           name: volume-COIN_MARKET_CAP_API_KEY_LIVE
           readOnly: true
-        - mountPath: /app/share/secrets
+        - mountPath: /app/share/secrets/COIN_MARKET_CAP_API_KEY_SANDBOX
           name: volume-COIN_MARKET_CAP_API_KEY_SANDBOX
           readOnly: true
-        - mountPath: /app/share/secrets
+        - mountPath: /app/share/secrets/COIN_MARKET_CAP_API_URL_LIVE
           name: volume-COIN_MARKET_CAP_API_URL_LIVE
           readOnly: true
-        - mountPath: /app/share/secrets
+        - mountPath: /app/share/secrets/COIN_MARKET_CAP_API_URL_SANDBOX
           name: volume-COIN_MARKET_CAP_API_URL_SANDBOX
           readOnly: true
-        - mountPath: /app/share/secrets
+        - mountPath: /app/share/secrets/DATABASE_SUPABASE_JSON
           name: volume-DATABASE_SUPABASE_JSON
           readOnly: true
-        - mountPath: /app/share/secrets
+        - mountPath: /app/share/secrets/DATABASE_URL
           name: volume-DATABASE_URL
           readOnly: true
-        - mountPath: /app/share/secrets
+        - mountPath: /app/share/secrets/GCP_PROJECT_ID
           name: volume-GCP_PROJECT_ID
           readOnly: true
-        - mountPath: /app/share/secrets
+        - mountPath: /app/share/secrets/LINE_CHANNEL_SECRET
           name: volume-LINE_CHANNEL_SECRET
           readOnly: true
-        - mountPath: /app/share/secrets
+        - mountPath: /app/share/secrets/LINE_CHANNEL_TOKEN
           name: volume-LINE_CHANNEL_TOKEN
           readOnly: true
       # Secret Manager から 取得 した シークレット を マウント するため
+      # なぜ 複数書くか -> Secret Manager は 1つの シークレット に 1つの ボリューム を 対応 させる 必要がある
+      # また ボリューム を 1個のディレクトリに まとめられない
+      # よって シークレット名 ごとに ディレクトリ が 作成 される
       volumes:
       # ボリューム としての 名前
       - name: volume-IS_LIVE
