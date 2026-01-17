@@ -13,6 +13,8 @@ import (
 	"github.com/ozaki-physics/raison-me/regung"
 	"github.com/ozaki-physics/raison-me/seed"
 	globalConfig "github.com/ozaki-physics/raison-me/share/config"
+	"github.com/ozaki-physics/raison-me/trybigquery"
+	"github.com/ozaki-physics/raison-me/trysupabase"
 	"github.com/ozaki-physics/raison-me/zeit"
 )
 
@@ -48,12 +50,12 @@ func Run() {
 	r.Mount("/zeit", zeit.Router())
 
 	r.HandleFunc("/test-supabase", func(w http.ResponseWriter, req *http.Request) {
-		records := "blank"
+		records := trysupabase.Try()
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("trysupabase executed" + "\n" + records))
 	})
 	r.HandleFunc("/test-bigquery", func(w http.ResponseWriter, req *http.Request) {
-		records := "blank"
+		records := trybigquery.Try()
 		w.WriteHeader(http.StatusOK)
 		_, _ = w.Write([]byte("trybigquery executed" + "\n" + records))
 	})

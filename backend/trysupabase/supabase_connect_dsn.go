@@ -258,7 +258,7 @@ func newPool_globalConfig(ctx context.Context) (*pgxpool.Pool, error) {
 
 // globalConfig から 作った Pool を 使う
 // チャピの通りに書いてみる
-func transactionPooler_ReadUsers_globalConfig() {
+func transactionPooler_ReadUsers_globalConfig() string {
 	ctx := context.Background()
 	pool, err := newPool_globalConfig(ctx)
 	if err != nil {
@@ -293,4 +293,5 @@ func transactionPooler_ReadUsers_globalConfig() {
 	}
 
 	log.Println("Fetched users: ", results)
+	return fmt.Sprintf("%v", results)
 }

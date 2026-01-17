@@ -1,7 +1,7 @@
 package trybigquery
 
-func Try() {
-	getRecord()
+func Try() string {
+	return getRecord()
 }
 
 func TryAll() {
