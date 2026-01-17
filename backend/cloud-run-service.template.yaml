@@ -19,9 +19,13 @@ spec:
         ports:
         - name: http1
           containerPort: ${CR_PORT}
+        # 公開 環境変数
         env:
         - name: IS_CLOUD
           value: 'true'
+        - name: PORT
+          value: '${CR_PORT}'
+        # リソース制限 の 設定
         resources:
           limits:
             cpu: 1000m
@@ -33,6 +37,105 @@ spec:
           failureThreshold: 1
           tcpSocket:
             port: ${CR_PORT}
+        # ボリューム を マウント する(場所 と ボリューム の対応)
+        volumeMounts:
+        # /app は Cloud Run 用 の Dockerfile で 作成 した ディレクトリ
+        - mountPath: /app/share/secrets/IS_LIVE
+          name: volume-IS_LIVE
+          readOnly: true
+        - mountPath: /app/share/secrets/COIN_MARKET_CAP_API_KEY_LIVE
+          name: volume-COIN_MARKET_CAP_API_KEY_LIVE
+          readOnly: true
+        - mountPath: /app/share/secrets/COIN_MARKET_CAP_API_KEY_SANDBOX
+          name: volume-COIN_MARKET_CAP_API_KEY_SANDBOX
+          readOnly: true
+        - mountPath: /app/share/secrets/COIN_MARKET_CAP_API_URL_LIVE
+          name: volume-COIN_MARKET_CAP_API_URL_LIVE
+          readOnly: true
+        - mountPath: /app/share/secrets/COIN_MARKET_CAP_API_URL_SANDBOX
+          name: volume-COIN_MARKET_CAP_API_URL_SANDBOX
+          readOnly: true
+        - mountPath: /app/share/secrets/DATABASE_SUPABASE_JSON
+          name: volume-DATABASE_SUPABASE_JSON
+          readOnly: true
+        - mountPath: /app/share/secrets/DATABASE_URL
+          name: volume-DATABASE_URL
+          readOnly: true
+        - mountPath: /app/share/secrets/GCP_PROJECT_ID
+          name: volume-GCP_PROJECT_ID
+          readOnly: true
+        - mountPath: /app/share/secrets/LINE_CHANNEL_SECRET
+          name: volume-LINE_CHANNEL_SECRET
+          readOnly: true
+        - mountPath: /app/share/secrets/LINE_CHANNEL_TOKEN
+          name: volume-LINE_CHANNEL_TOKEN
+          readOnly: true
+      # Secret Manager から 取得 した シークレット を マウント するため
+      volumes:
+      # ボリューム としての 名前
+      - name: volume-IS_LIVE
+        secret:
+          # Secret Manager 上 の シークレット名
+          secretName: IS_LIVE
+          items:
+          - key: latest
+            # Secret Manager から 取得した 値 が格納された ファイル名
+            path: IS_LIVE
+      - name: volume-COIN_MARKET_CAP_API_KEY_LIVE
+        secret:
+          secretName: COIN_MARKET_CAP_API_KEY_LIVE
+          items:
+          - key: latest
+            path: COIN_MARKET_CAP_API_KEY_LIVE
+      - name: volume-COIN_MARKET_CAP_API_KEY_SANDBOX
+        secret:
+          secretName: COIN_MARKET_CAP_API_KEY_SANDBOX
+          items:
+          - key: latest
+            path: COIN_MARKET_CAP_API_KEY_SANDBOX
+      - name: volume-COIN_MARKET_CAP_API_URL_LIVE
+        secret:
+          secretName: COIN_MARKET_CAP_API_URL_LIVE
+          items:
+          - key: latest
+            path: COIN_MARKET_CAP_API_URL_LIVE
+      - name: volume-COIN_MARKET_CAP_API_URL_SANDBOX
+        secret:
+          secretName: COIN_MARKET_CAP_API_URL_SANDBOX
+          items:
+          - key: latest
+            path: COIN_MARKET_CAP_API_URL_SANDBOX
+      - name: volume-DATABASE_SUPABASE_JSON
+        secret:
+          secretName: DATABASE_SUPABASE_JSON
+          items:
+          - key: latest
+            path: DATABASE_SUPABASE_JSON
+      - name: volume-DATABASE_URL
+        secret:
+          secretName: DATABASE_URL
+          items:
+          - key: latest
+            path: DATABASE_URL
+      - name: volume-GCP_PROJECT_ID
+        secret:
+          secretName: GCP_PROJECT_ID
+          items:
+          - key: latest
+            path: GCP_PROJECT_ID
+      - name: volume-LINE_CHANNEL_SECRET
+        secret:
+          secretName: LINE_CHANNEL_SECRET
+          items:
+          - key: latest
+            path: LINE_CHANNEL_SECRET
+      - name: volume-LINE_CHANNEL_TOKEN
+        secret:
+          secretName: LINE_CHANNEL_TOKEN
+          items:
+          - key: latest
+            path: LINE_CHANNEL_TOKEN
+  # Cloud Run の トラフィック設定
   traffic:
   - percent: 100
     latestRevision: true

@@ -25,6 +25,8 @@ on:
 # - GAR_LOCATION: Artifact Registry の ロケーション
 # - GCR_SERVICE_NAME: Cloud Run サービス名
 # - GCR_REGION: Cloud Run サービスのリージョン
+# - GCR_PORT: Cloud Run サービスの ポート番号
+# - GCR_SERVICE_ACCOUNT: Cloud Run サービスに付与する サービスアカウント
 
 jobs:
   deploy:

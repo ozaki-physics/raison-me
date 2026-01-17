@@ -25,7 +25,10 @@
         // Markdown でグラフを書く
         "bierner.markdown-mermaid",
         // svelte 用の拡張機能
-        "svelte.svelte-vscode"
+        "svelte.svelte-vscode",
+        // GitHub Copilot
+        "github.copilot-chat"
+
       ]
     }
   },
