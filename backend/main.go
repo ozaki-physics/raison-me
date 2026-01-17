@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -14,7 +13,6 @@ import (
 	"github.com/ozaki-physics/raison-me/regung"
 	"github.com/ozaki-physics/raison-me/seed"
 	globalConfig "github.com/ozaki-physics/raison-me/share/config"
-	"github.com/ozaki-physics/raison-me/trybigquery"
 	"github.com/ozaki-physics/raison-me/zeit"
 )
 
@@ -22,13 +20,15 @@ func main() {
 	// fmt.Println("hello world!")
 	// helloworld.Main()
 
-	trybigquery.Main()
-	// Run()
+	// trybigquery.Try()
+	// trylocaldb.Try()
+	// trysupabase.Try()
+	Run()
 }
 
 func Run() {
 	globalConfig := globalConfig.NewConfig()
-	log.Printf("globalConfig: %v", globalConfig)
+	// log.Printf("globalConfig: %v", globalConfig)
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
@@ -47,7 +47,18 @@ func Run() {
 	r.Mount("/seed", seed.Router())
 	r.Mount("/zeit", zeit.Router())
 
-	port := os.Getenv("PORT")
+	r.HandleFunc("/test-supabase", func(w http.ResponseWriter, req *http.Request) {
+		records := "blank"
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("trysupabase executed" + "\n" + records))
+	})
+	r.HandleFunc("/test-bigquery", func(w http.ResponseWriter, req *http.Request) {
+		records := "blank"
+		w.WriteHeader(http.StatusOK)
+		_, _ = w.Write([]byte("trybigquery executed" + "\n" + records))
+	})
+
+	port := globalConfig.GetPort()
 	if port == "" {
 		port = "8081"
 		log.Printf("Defaulting to port %s", port)

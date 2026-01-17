@@ -1,7 +1,7 @@
 package trysupabase
 
 func Try() {
-	transactionPooler_ReadUsers()
+	transactionPooler_ReadUsers_globalConfig()
 }
 
 func TryAll() {
