@@ -12,7 +12,10 @@ import (
 	"google.golang.org/api/iterator"
 )
 
-func Main() {
+// BigQuery へ 接続 して クエリを 実行 する
+// 環境変数 GOOGLE_APPLICATION_CREDENTIALS で JSON キー ファイル を 指定 して使う
+// 自作 メソッド を 呼び出す 側
+func getRecord() {
 	globalConfig := globalConfig.NewConfig()
 
 	ctx := context.Background()
@@ -32,7 +35,7 @@ func Main() {
 	}
 }
 
-// 取得 SQL
+// 取得 SQL 文
 func query(ctx context.Context, client *bigquery.Client) (*bigquery.RowIterator, error) {
 
 	query := client.Query(
