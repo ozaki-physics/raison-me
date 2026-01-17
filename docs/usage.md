@@ -36,6 +36,18 @@ $ docker container run --rm -d -p 8080:8080 --name go_raison_me go1.16:raison_me
 $ docker container stop go_raison_me
 ```
 
+## Cloud Run の Docker image を確認する
+```bash
+$ docker image build -t raison_me_backend:GCR_local_check -f backend/Dockerfile ./backend
+
+$ docker container run -d --name backend_GCR_local_check -p 5011:8081 raison_me_backend:GCR_local_check
+$ docker container exec -it backend_GCR_local_check bash
+# または
+$ docker container run --rm -it --name backend_GCR_local_check -p 5011:8081 --entrypoint /bin/bash raison_me_backend:GCR_local_check
+# なぜかコンテナが すぐ止まるときのログ確認
+$ docker logs backend_GCR_local_check
+```
+ちゃんと ビルドステージ の image の secret フォルダ内に クレデンシャル が無いことを確認した
 ### 外部モジュールのバージョンアップ
 例として github.com/gin-gonic/gin をバージョンアップする  
 1. コンテナにアタッチする

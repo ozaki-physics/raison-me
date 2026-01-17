@@ -9,6 +9,12 @@ RLS は いったん 気にしない
 ## 開発環境の起動方法
 VS Code の Dev Containers を使う
 
+または
+`pwd` raison-me
+`docker compose -f .\.devcontainer\compose.yml up -d`
+
+どちらかで 起動したら もう片方の方法で起動することは できないっぽい
+
 ## マイグレーション について
 ### マイグレーションの実行
 以下を実行する
