@@ -23,8 +23,6 @@ spec:
         env:
         - name: IS_CLOUD
           value: 'true'
-        - name: PORT
-          value: '${CR_PORT}'
         # リソース制限 の 設定
         resources:
           limits:

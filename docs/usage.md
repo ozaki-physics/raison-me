@@ -171,3 +171,10 @@ $ gcloud app deploy
 `go get: added cloud.google.com/go/secretmanager v1.3.0`  
 `$ go get google.golang.org/genproto/googleapis/cloud/secretmanager/v1`  
 `$ go mod tidy`  
+
+## Cloud Run に Secret Manager の情報を ファイルでマウントする
+ドキュメント: <a href="https://docs.cloud.google.com/run/docs/configuring/services/secrets?hl=ja#yaml" target="_blank" rel="noopener noreferrer">サービスのシークレットを構成する</a>  
+ファイルマウントにする  
+Secret Manager に登録しないといけない値は 以下で確認する  
+名前: `backend\cloud-run-service.template.yaml` に書かれている secretName  
+値: `backend\share\secrets\00_comment.dev` に書かれてる値  
