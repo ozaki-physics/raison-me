@@ -68,6 +68,10 @@ spec:
         - mountPath: /app/share/secrets/LINE_CHANNEL_TOKEN
           name: volume-LINE_CHANNEL_TOKEN
           readOnly: true
+          # TODO: 暫定の認証
+        - mountPath: /app/share/secrets/SAMPLE_API_TOKEN
+          name: volume-SAMPLE_API_TOKEN
+          readOnly: true
       # Secret Manager から 取得 した シークレット を マウント するため
       # なぜ 複数書くか -> Secret Manager は 1つの シークレット に 1つの ボリューム を 対応 させる 必要がある
       # また ボリューム を 1個のディレクトリに まとめられない
@@ -136,6 +140,13 @@ spec:
           items:
           - key: latest
             path: LINE_CHANNEL_TOKEN
+      # TODO: 暫定の認証
+      - name: volume-SAMPLE_API_TOKEN
+        secret:
+          secretName: SAMPLE_API_TOKEN
+          items:
+          - key: latest
+            path: SAMPLE_API_TOKEN
   # Cloud Run の トラフィック設定
   traffic:
   - percent: 100

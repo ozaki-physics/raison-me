@@ -10,11 +10,10 @@ import (
 	"github.com/ozaki-physics/raison-me/delight"
 	"github.com/ozaki-physics/raison-me/growth"
 	"github.com/ozaki-physics/raison-me/info"
+	"github.com/ozaki-physics/raison-me/middleware_temp"
 	"github.com/ozaki-physics/raison-me/regung"
 	"github.com/ozaki-physics/raison-me/seed"
 	globalConfig "github.com/ozaki-physics/raison-me/share/config"
-	"github.com/ozaki-physics/raison-me/trybigquery"
-	"github.com/ozaki-physics/raison-me/trysupabase"
 	"github.com/ozaki-physics/raison-me/zeit"
 )
 
@@ -34,6 +33,8 @@ func Run() {
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+	// TODO: 暫定の認証ミドルウェア
+	r.Use(middleware_temp.SampleMiddleware)
 
 	// 静的ファイル の 配信
 	r.Mount("/", staticFileRouter())
@@ -48,17 +49,6 @@ func Run() {
 	r.Mount("/regung", regung.Router())
 	r.Mount("/seed", seed.Router())
 	r.Mount("/zeit", zeit.Router())
-
-	r.HandleFunc("/test-supabase", func(w http.ResponseWriter, req *http.Request) {
-		records := trysupabase.Try()
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("trysupabase executed" + "\n" + records))
-	})
-	r.HandleFunc("/test-bigquery", func(w http.ResponseWriter, req *http.Request) {
-		records := trybigquery.Try()
-		w.WriteHeader(http.StatusOK)
-		_, _ = w.Write([]byte("trybigquery executed" + "\n" + records))
-	})
 
 	port := globalConfig.GetPort()
 	if port == "" {

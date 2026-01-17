@@ -17,6 +17,8 @@ type Config interface {
 	GetDSN() string
 	GetSupabaseDSN() string
 	GetPort() string
+	// TODO: 暫定の認証
+	GetSampleAPIToken() string
 }
 
 func NewConfig() Config {
@@ -32,6 +34,9 @@ func NewConfig() Config {
 	dataSourceName := readFile[string](isCloud, "DATABASE_URL")
 	supabaseConfig := readFile[supabaseConfig](isCloud, "DATABASE_SUPABASE_JSON")
 
+	// TODO: 暫定の認証
+	sampleAPIToken := readFile[string](isCloud, "SAMPLE_API_TOKEN")
+
 	c := config{
 		isLive:         isLive,
 		isCloud:        isCloud,
@@ -39,6 +44,7 @@ func NewConfig() Config {
 		dataSourceName: dataSourceName,
 		supabaseConfig: supabaseConfig,
 		port:           port,
+		sampleAPIToken: sampleAPIToken,
 	}
 	return &c
 }
@@ -50,6 +56,7 @@ type config struct {
 	dataSourceName string
 	supabaseConfig supabaseConfig
 	port           string
+	sampleAPIToken string
 }
 
 func (c *config) IsLive() bool {
@@ -77,6 +84,10 @@ func (c *config) GetSupabaseDSN() string {
 
 func (c *config) GetPort() string {
 	return c.port
+}
+
+func (c *config) GetSampleAPIToken() string {
+	return c.sampleAPIToken
 }
 
 type supabaseConfig struct {
