@@ -10,10 +10,12 @@ import (
 	"github.com/ozaki-physics/raison-me/info/authN/presen"
 	"github.com/ozaki-physics/raison-me/info/authN/usecase"
 	"github.com/ozaki-physics/raison-me/share"
+	"github.com/ozaki-physics/raison-me/share/config"
 )
 
 // AuthN コンテキスト を統括するルータ
-func Router() chi.Router {
+// アプリ 全体共通の config.App を 受け取っているが サービス 固有の App を作ってもよい
+func Router(app config.App) chi.Router {
 	// ルーティングの定義
 	r := chi.NewRouter()
 	r.Get("/", func(w http.ResponseWriter, r *http.Request) {
