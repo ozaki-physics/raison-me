@@ -9,31 +9,59 @@ import (
 )
 
 // 認証 ミドルウェア の サンプル
-func SampleMiddleware(next http.Handler) http.Handler {
-	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		// TODO: 認証処理 を ここに 書く
-		// リクエスト ヘッダー の Authorization から 値を取得して チェック
-		requestAuthorization := r.Header.Get("Authorization")
-		log.Printf("Authorization: %s", requestAuthorization)
-		if requestAuthorization == "" {
-			http.Error(w, "missing Authorization header", http.StatusUnauthorized)
-			return
-		}
+func SampleMiddleware(config config.Config) func(http.Handler) http.Handler {
+	return func(next http.Handler) http.Handler {
+		return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+			// TODO: 認証処理 を ここに 書く
 
-		token, ok := parseBearer(requestAuthorization)
-		if !ok {
-			http.Error(w, "invalid Authorization header format(expected 'Bearer <token>')", http.StatusUnauthorized)
-			return
-		}
+			// 静的ファイル配信 のため ルート直下の以下のファイルへの アクセス は 認証不要 とする
+			// TODO: 本来は 静的ファイル配信 自体を ミドルウェアの外に出すべき?
+			// TODO: 静的ファイル も 認証が必要な場合は どうしよう
+			staticFiles := []string{
+				"/favicon.ico",
+				"/robots.txt",
+				"/sitemap.xml",
+				"/humans.txt",
+			}
+			requestPath := r.URL.Path
+			for _, file := range staticFiles {
+				if requestPath == file {
+					log.Printf("静的ファイル配信のため 認証スキップ: %s", requestPath)
+					next.ServeHTTP(w, r)
+					return
+				}
+			}
 
-		sampleAPIToken := config.NewConfig().GetSampleAPIToken()
-		if token != sampleAPIToken {
-			http.Error(w, "invalid token", http.StatusUnauthorized)
-			return
-		}
+			// 開発環境 なら トークン認証なしで 通す
+			if config.IsCloud() == false {
+				log.Printf("開発環境と判定 認証をスキップ")
+				next.ServeHTTP(w, r)
+				return
+			}
 
-		next.ServeHTTP(w, r)
-	})
+			// リクエスト ヘッダー の Authorization から 値を取得して チェック
+			requestAuthorization := r.Header.Get("Authorization")
+			log.Printf("Authorization: %s", requestAuthorization)
+			if requestAuthorization == "" {
+				http.Error(w, "missing Authorization header", http.StatusUnauthorized)
+				return
+			}
+
+			token, ok := parseBearer(requestAuthorization)
+			if !ok {
+				http.Error(w, "invalid Authorization header format(expected 'Bearer <token>')", http.StatusUnauthorized)
+				return
+			}
+
+			sampleAPIToken := config.GetSampleAPIToken()
+			if token != sampleAPIToken {
+				http.Error(w, "invalid token", http.StatusUnauthorized)
+				return
+			}
+
+			next.ServeHTTP(w, r)
+		})
+	}
 }
 
 func parseBearer(auth string) (string, bool) {
