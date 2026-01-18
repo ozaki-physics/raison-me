@@ -22,6 +22,7 @@ type Config interface {
 }
 
 func NewConfig() Config {
+	log.Println("Config: called")
 	isCloud := os.Getenv("IS_CLOUD") == "true"
 	port := os.Getenv("PORT")
 	if port == "" {

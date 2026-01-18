@@ -13,7 +13,7 @@ import (
 	"github.com/ozaki-physics/raison-me/middleware_temp"
 	"github.com/ozaki-physics/raison-me/regung"
 	"github.com/ozaki-physics/raison-me/seed"
-	globalConfig "github.com/ozaki-physics/raison-me/share/config"
+	"github.com/ozaki-physics/raison-me/share/config"
 	"github.com/ozaki-physics/raison-me/zeit"
 )
 
@@ -28,13 +28,13 @@ func main() {
 }
 
 func Run() {
-	globalConfig := globalConfig.NewConfig()
-	// log.Printf("globalConfig: %v", globalConfig)
+	// 環境変数 や DB コネクションプール の 初期化
+	app := config.NewAppBuild()
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
 	// TODO: 暫定の認証ミドルウェア
-	r.Use(middleware_temp.SampleMiddleware)
+	r.Use(middleware_temp.SampleMiddleware(app.GetConfig()))
 
 	// 静的ファイル の 配信
 	r.Mount("/", staticFileRouter())
@@ -45,12 +45,12 @@ func Run() {
 	r.Mount("/capital", capital.Router())
 	r.Mount("/delight", delight.Router())
 	r.Mount("/growth", growth.Router())
-	r.Mount("/info", info.Router())
+	r.Mount("/info", info.Router(app))
 	r.Mount("/regung", regung.Router())
 	r.Mount("/seed", seed.Router())
 	r.Mount("/zeit", zeit.Router())
 
-	port := globalConfig.GetPort()
+	port := app.GetConfig().GetPort()
 	if port == "" {
 		port = "8081"
 		log.Printf("Defaulting to port %s", port)
