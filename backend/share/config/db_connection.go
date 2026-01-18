@@ -14,7 +14,14 @@ import (
 // TODO: もっと 適切な場所に 移動 する
 func newPool(ctx context.Context, gc Config) (*pgxpool.Pool, error) {
 	log.Println("Creating new DB pool")
-	cfg, err := pgxpool.ParseConfig(gc.GetDSN())
+
+	// TODO: 環境によって 切り替えが必要
+	dsn := gc.GetDSN()
+	if gc.IsCloud() {
+		dsn = gc.GetSupabaseDSN()
+	}
+	cfg, err := pgxpool.ParseConfig(dsn)
+
 	if err != nil {
 		return nil, err
 	}
@@ -58,5 +65,6 @@ func pingPool(ctx context.Context, pool *pgxpool.Pool) error {
 		pool.Close()
 		return err
 	}
+	log.Println("DB pool is connected and ready")
 	return nil
 }
