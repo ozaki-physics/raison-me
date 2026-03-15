@@ -11,7 +11,7 @@ VS Code の Dev Containers を使う
 
 または
 `pwd` raison-me
-`docker compose -f .\.devcontainer\compose.yml up -d`
+`docker compose -f .\.devcontainer\compose.yaml up -d`
 
 どちらかで 起動したら もう片方の方法で起動することは できないっぽい
 
@@ -60,18 +60,18 @@ COMMIT;
 
 ## DB コンテナ を 扱うときの Docker コマンド
 - image の ビルド
-`docker compose -f .\.devcontainer\compose.yml buil`
+`docker compose -f .\.devcontainer\compose.yaml buil`
 
 - image から コンテナ をデーモンで作成
-`docker compose -f .\.devcontainer\compose.yml up -d`
+`docker compose -f .\.devcontainer\compose.yaml up -d`
 
 - コンテナの接続
-`docker compose -f .\.devcontainer\compose.yml exec local_db bash`
+`docker compose -f .\.devcontainer\compose.yaml exec local_db bash`
 
 - コンテナの削除(ボリューム含む)
 基本 使わない
 `-v` で DB のデータが入ってるボリュームごと消す
-`docker compose -f .\.devcontainer\compose.yml down -v`
+`docker compose -f .\.devcontainer\compose.yaml down -v`
 
 - ボリュームの確認
 `docker volume ls`
@@ -245,6 +245,14 @@ WHERE
     c.relname = 'users'
 ;
 ```
+
+## ローカル の PostgreSQL で 最初からやり直したいとき
+1. コンテナごと削除する
+2. テーブルを削除する
+`SET search_path TO app, public;`
+`delete from schema_migrations;`
+`drop table capital_coin_transaction;`
+`drop table capital_coin;`
 
 ## DB コンテナのボリューム と 初回起動 について
 postgres:17 は既定で 次の環境変数のパスに データが格納される
