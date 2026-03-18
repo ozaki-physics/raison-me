@@ -19,6 +19,8 @@ func NewApiHandler(ac apiCase) Handler {
 	return &handler{ac}
 }
 
+// レスポンス を 常に JSON にするため
+// TODO: 大局的 エラー キャッチのため?
 func (h *handler) Handler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	err := h.ac(w, r)

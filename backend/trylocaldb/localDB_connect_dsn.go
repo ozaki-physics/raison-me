@@ -50,6 +50,8 @@ func getRecord() {
 	if err != nil {
 		log.Fatalf("query: %v\n", err)
 	}
+	defer rows.Close()
+
 	for rows.Next() {
 		var c Coin
 		if err := rows.Scan(&c.ID, &c.Symbol, &c.CoinMarketCapID, &c.CreatedAt, &c.UpdatedAt, &c.DeletedAt); err != nil {
