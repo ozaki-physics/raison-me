@@ -1,5 +1,7 @@
 package domain
 
+import "context"
+
 // この struct は ユースケース層 で使われていて 実装は インフラ層
 type UserRepo interface {
 	userRepoInsert
@@ -10,23 +12,23 @@ type UserRepo interface {
 
 // 追加する
 type userRepoInsert interface {
-	Insert(id UserID, name UserName) (*User, error)
+	Insert(ctx context.Context, user *User) (*User, error)
 }
 
 // 取得する
 type userRepoFetch interface {
-	Fetch() ([]User, error)
-	FindByAccountId(accountID AccountID) (*User, error)
-	FindById(id UserID) (*User, error)
-	FindByName(name UserName) (*User, error)
+	Fetch(ctx context.Context) ([]User, error)
+	FindByAccountId(ctx context.Context, accountID AccountID) (*User, error)
+	FindById(ctx context.Context, id UserID) (*User, error)
+	// FindByName(ctx context.Context, name UserName) (*User, error)
 }
 
 // 更新する
 type userRepoUpdate interface {
-	Update(user *User) (*User, error)
+	Update(ctx context.Context, user *User) (*User, error)
 }
 
 // 削除する
 type userRepoDelete interface {
-	Delete(accountID AccountID) error
+	Delete(ctx context.Context, accountID AccountID) error
 }

@@ -106,8 +106,8 @@ func TestNewPassword(t *testing.T) {
 
 			// if got.ToHash() != tt.want.first {}
 			// t.Errorf(got.ToHash())
-			if got.ToHash() == "" {
-				t.Errorf("実際の値は %v, 想定した値は %v", got.ToHash(), tt.want)
+			if got.HashText() == "" {
+				t.Errorf("実際の値は %v, 想定した値は %v", got.HashText(), tt.want)
 			}
 		})
 	}
@@ -169,8 +169,8 @@ func TestReNewPassword(t *testing.T) {
 				return
 			}
 
-			if got.ToHash() != tt.want.first {
-				t.Errorf("実際の値は %v, 想定した値は %v", got.ToHash(), tt.want)
+			if got.HashText() != tt.want.first {
+				t.Errorf("実際の値は %v, 想定した値は %v", got.HashText(), tt.want)
 			}
 		})
 	}
