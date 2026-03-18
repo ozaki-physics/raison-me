@@ -57,6 +57,12 @@ func Run() {
 	}
 	log.Printf("Listening on port %s", port)
 
+	// ローカル開発環境 なら ローカルホスト の URL も表示
+	if !app.GetConfig().IsLive() {
+		localPort := "5001"
+		log.Printf("http://localhost:%s/", localPort)
+	}
+
 	// サーバ起動
 	if err := http.ListenAndServe(":"+port, r); err != nil {
 		log.Fatal("ListenAndServe", err)
