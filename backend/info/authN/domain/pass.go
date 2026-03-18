@@ -1,5 +1,7 @@
 package domain
 
+import "time"
+
 // パスワード
 type Pass struct {
 	passID    PassID    // システム上の ID
@@ -33,7 +35,7 @@ func NewPass(pID PassID, aID AccountID, pass Password, iat Date) (*Pass, DomainE
 
 // インフラ層でドメインオブジェクトを生成するため
 // 本当は 値オブジェクト を1個ずつ生成した方がいいんだろうけど 面倒だからまとめた
-func ReNewPass(passID string, accountID string, password string, iat string) (*Pass, DomainError) {
+func ReNewPass(passID string, accountID string, password string, iat time.Time) (*Pass, DomainError) {
 	var errs []DomainError
 	pID, err01 := ReNewPassID(passID)
 	errs = append(errs, err01)
@@ -59,7 +61,7 @@ func (p *Pass) IsLogin(inputPassword string) (bool, DomainError) {
 
 // 以下ゲッター
 
-func (p *Pass) PassID() PassID {
+func (p *Pass) ID() PassID {
 	return p.passID
 }
 

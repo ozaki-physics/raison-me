@@ -22,7 +22,11 @@ func NewDate() (Date, DomainError) {
 	return constructorDate(d)
 }
 
-func ReNewDate(d string) (Date, DomainError) {
+func ReNewDate(d time.Time) (Date, DomainError) {
+	return constructorDate(d)
+}
+
+func NewDateFromString(d string) (Date, DomainError) {
 	dt, err := time.Parse(time.RFC3339, d)
 	if err != nil {
 		return Date{time.Now()}, WrapDomainError("日付のパースに失敗しました", err)
@@ -33,6 +37,6 @@ func ReNewDate(d string) (Date, DomainError) {
 // 以下ゲッター
 
 // このサービス内で使う日付表記のフォーマット
-func (d *Date) MyFormat() string {
+func (d Date) MyFormat() string {
 	return d.Format(time.RFC3339)
 }

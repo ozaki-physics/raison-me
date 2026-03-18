@@ -3,6 +3,7 @@ package domain_test
 import (
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/ozaki-physics/raison-me/info/authN/domain"
 )
@@ -56,11 +57,16 @@ func TestReNewPass(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			iat, err := time.Parse(time.RFC3339, tt.args.iat)
+			if err != nil {
+				t.Fatalf("failed to parse iat: %v", err)
+			}
+
 			got, err := domain.ReNewPass(
 				tt.args.passID,
 				tt.args.accountID,
 				tt.args.password,
-				tt.args.iat,
+				iat,
 			)
 
 			if (err != nil) != tt.err.hasErr {
@@ -84,10 +90,10 @@ func TestReNewPass(t *testing.T) {
 			a, _ := domain.ReNewPassID(tt.want.passID)
 			b, _ := domain.ReNewAccountID(tt.want.accountID)
 			c, _ := domain.ReNewPassword(tt.want.password)
-			d, _ := domain.ReNewDate(tt.want.iat)
+			d, _ := domain.ReNewDate(iat)
 
-			if got.PassID() != a {
-				t.Errorf("実際の値は %v, 想定した値は %v", got.PassID(), a)
+			if got.ID() != a {
+				t.Errorf("実際の値は %v, 想定した値は %v", got.ID(), a)
 			}
 			if got.AccountID() != b {
 				t.Errorf("実際の値は %v, 想定した値は %v", got.AccountID(), b)
