@@ -10,9 +10,16 @@ import (
 
 type ApiCase interface {
 	// ユーザー を 作成
-	UserCreate(w http.ResponseWriter, r *http.Request) error
-	// ユーザー で ログイン
-	UserEntry(w http.ResponseWriter, r *http.Request) error
+	CreateUser(w http.ResponseWriter, r *http.Request) error
+	// ユーザー で サインイン
+	SignIn(w http.ResponseWriter, r *http.Request) error
+	// ユーザー で サインアウト
+	// SignOut(w http.ResponseWriter, r *http.Request) error
+	// // ユーザー一覧
+	GetUserList(w http.ResponseWriter, r *http.Request) error
+	// // ユーザーを検索
+	SearchUser(w http.ResponseWriter, r *http.Request, req string) error
+
 	// IDトークン の 発行
 	IDTokenGenerate(w http.ResponseWriter, r *http.Request) error
 	// IDトークン が 有効か
@@ -20,34 +27,89 @@ type ApiCase interface {
 }
 
 type apiCase struct {
-	user       usecase.User
-	credential usecase.Credential
+	usecase.AuthN
 }
 
-func NewAPICase(u usecase.User, c usecase.Credential) ApiCase {
-	return &apiCase{u, c}
+func NewAPICase(authn usecase.AuthN) ApiCase {
+	return &apiCase{authn}
 }
 
-func (api *apiCase) UserCreate(w http.ResponseWriter, r *http.Request) error {
-	// TODO: 未実装
-	fmt.Println("hello")
-	return nil
-}
+// TODO: 動作確認用で 暫定な実装
+func (api *apiCase) CreateUser(w http.ResponseWriter, r *http.Request) error {
+	ctx := r.Context()
 
-func (api *apiCase) UserEntry(w http.ResponseWriter, r *http.Request) error {
-	// TODO: 未実装
-	fmt.Println("world")
+	userName := r.FormValue("userName")
+	userID := r.FormValue("userID")
+	passPlane := r.FormValue("password")
 
-	if err := r.ParseForm(); err != nil {
+	saveUserDto, err := api.AuthN.Create(ctx, userName, userID, passPlane)
+	if err != nil {
 		return err
 	}
 
-	for k, v := range r.Form {
-		fmt.Printf("%v: %v\n", k, v)
+	w.Write([]byte("ユーザーを作成しました\n"))
+	w.Write([]byte("AccountID: " + saveUserDto.AccountID + "\n"))
+	w.Write([]byte("UserID: " + saveUserDto.UserID + "\n"))
+	w.Write([]byte("UserName: " + saveUserDto.UserName + "\n"))
+	return nil
+}
+
+// TODO: 動作確認用で 暫定な実装
+func (api *apiCase) SignIn(w http.ResponseWriter, r *http.Request) error {
+	ctx := r.Context()
+
+	type signInRequest struct {
+		UserID   string `json:"userID"`
+		Password string `json:"password"`
+	}
+	var req signInRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		return err
 	}
 
-	fmt.Println(r.FormValue("hello"))
-	fmt.Println(r.PostFormValue("hello"))
+	userID := req.UserID
+	passwordPlane := req.Password
+
+	isOK, err := api.AuthN.SignIn(ctx, userID, passwordPlane)
+	if err != nil {
+		return err
+	}
+
+	if isOK {
+		w.Write([]byte("ログインに成功しました\n"))
+	} else {
+		w.Write([]byte("ログインに失敗しました\n"))
+	}
+	return nil
+}
+
+// TODO: 動作確認用で 暫定な実装
+func (api *apiCase) GetUserList(w http.ResponseWriter, r *http.Request) error {
+	ctx := r.Context()
+
+	users, err := api.AuthN.GetUserList(ctx)
+	if err != nil {
+		return err
+	}
+
+	for _, u := range users {
+		s := fmt.Sprintf("AccountID: %s, UserID: %s, UserName: %s", u.AccountID, u.UserID, u.UserName)
+		w.Write([]byte(s + "\n"))
+	}
+	return nil
+}
+
+// TODO: 動作確認用で 暫定な実装
+func (api *apiCase) SearchUser(w http.ResponseWriter, r *http.Request, param string) error {
+	ctx := r.Context()
+
+	user, err := api.AuthN.SearchUser(ctx, param)
+	if err != nil {
+		return err
+	}
+
+	s := fmt.Sprintf("AccountID: %s, UserID: %s, UserName: %s", user.AccountID, user.UserID, user.UserName)
+	w.Write([]byte(s + "\n"))
 	return nil
 }
 
@@ -65,5 +127,16 @@ func (api *apiCase) IDTokenGenerate(w http.ResponseWriter, r *http.Request) erro
 func (api *apiCase) IsIDTokenOK(w http.ResponseWriter, r *http.Request) error {
 	// TODO: 未実装
 	fmt.Println("lost")
+
+	if err := r.ParseForm(); err != nil {
+		return err
+	}
+
+	for k, v := range r.Form {
+		fmt.Printf("%v: %v\n", k, v)
+	}
+
+	fmt.Println(r.FormValue("hello"))
+	fmt.Println(r.PostFormValue("hello"))
 	return nil
 }

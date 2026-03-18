@@ -22,31 +22,39 @@ func Router(app config.App) chi.Router {
 		w.Write([]byte("これは info の authn だよ\n"))
 	})
 
-	r.Get("/user", SearchUser)
+	// TOOD: 暫定的
+	r.Get("/json-users", SearchUserJSON)
 
-	// DI のイメージ?
-	// TODO: 用途不明
-	userRepo, _ := infra.NewUserRepoJSON()
-	credentialRepo, _ := infra.NewCredentialRepoJSON()
-	cryptoRepo, _ := infra.NewCryptoRepoJSON()
-	userUsecase, _ := usecase.NewUser(userRepo, cryptoRepo)
-	credentialUsecase, _ := usecase.NewCredential(credentialRepo, cryptoRepo)
-	api := presen.NewAPICase(userUsecase, credentialUsecase)
+	// DI
+	userRepo, _ := infra.NewUserRepoSQL(app.GetPool())
+	passRepo, _ := infra.NewPassRepoSQL(app.GetPool())
+	authN, _ := usecase.NewAuthN(userRepo, passRepo)
+	api := presen.NewAPICase(authN)
 
 	// TODO: 用途不明
 	r.Route("/entry", func(r chi.Router) {
-		r.Get("/", share.NewApiHandler(api.UserCreate).Handler)
-		r.Post("/", share.NewApiHandler(api.UserEntry).Handler)
+		r.Get("/", share.NewApiHandler(api.CreateUser).Handler)
+		r.Post("/", share.NewApiHandler(api.SignIn).Handler)
 	})
 	r.Route("/token", func(r chi.Router) {
 		r.Post("/", share.NewApiHandler(api.IDTokenGenerate).Handler)
+	})
+
+	r.Route("/users", func(r chi.Router) {
+		r.Get("/", share.NewApiHandler(api.GetUserList).Handler)
+		r.Get("/{userID}", share.NewApiHandler(
+			func(w http.ResponseWriter, req *http.Request) error {
+				userID := chi.URLParam(req, "userID")
+				return api.SearchUser(w, req, userID)
+			},
+		).Handler)
 	})
 
 	return r
 }
 
 // TODO: マジで暫定的 な プレゼンテーション層
-func SearchUser(w http.ResponseWriter, r *http.Request) {
+func SearchUserJSON(w http.ResponseWriter, r *http.Request) {
 	storagePath := infra.NewStoragePath()
 
 	userCount := storagePath.GetUser()

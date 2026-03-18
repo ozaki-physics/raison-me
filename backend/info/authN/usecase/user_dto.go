@@ -2,51 +2,33 @@ package usecase
 
 import "github.com/ozaki-physics/raison-me/info/authN/domain"
 
-// プレゼン層 との値のやり取り
+// ユースケース層 から プレゼン層 へ 連携
+// 値を詰め替えるための構造体 だから DTO(Data Transfer Object) と呼ぶ
+// 理由は 業務ロジック が プレゼン層 に 漏れないようにするため
+// 業務ロジック を 持たないため 値は 公開して良い
+// パスワードは プレゼン層 で 取り出すことは無いと思うので 存在させない
 type UserDto struct {
-	accountID string
-	userID    string
-	userName  string
-	pass      string
+	AccountID string
+	UserID    string
+	UserName  string
 }
 
-func constructorUserDto(aID string, uID string, uName string, pass string) *UserDto {
+func constructorUserDto(aID string, uID string, uName string) *UserDto {
 	// バリデーションは必要なのか?
 	// ただ詰め替えるだけで 必要な値が入っているかのチェックは値オブジェクトの生成に任せる
 	ud := &UserDto{
 		aID,
 		uID,
 		uName,
-		pass,
 	}
 	return ud
 }
 
-func NewUserDto(aID domain.AccountID, uID domain.UserID, uName domain.UserName, password domain.Password) *UserDto {
-	return constructorUserDto(aID.Val(), uID.Val(), uName.Val(), password.String())
+func NewUserDto(aID domain.AccountID, uID domain.UserID, uName domain.UserName) *UserDto {
+	return constructorUserDto(aID.Val(), uID.Val(), uName.Val())
 }
 
 // プリミティブ型から生成するときは ReNew にする
-func ReNewUserDto(aID string, uID string, uName string, pass string) *UserDto {
-	return constructorUserDto(aID, uID, uName, pass)
-}
-
-// 以下 ゲッター
-
-func (u *UserDto) AccountID() string {
-	return u.accountID
-}
-
-func (u *UserDto) ID() string {
-	return u.userID
-}
-
-func (u *UserDto) Name() string {
-	return u.userName
-}
-
-// プレゼン層 から ユースケース層に渡すときは ユースケース層　で パスワード を取り出す必要があるが
-// プレゼン層 で パスワードを取り出すことは無いと思うので 意図的にパブリックなゲッターを用意しない
-func (u *UserDto) password() string {
-	return u.pass
+func ReNewUserDto(aID string, uID string, uName string) *UserDto {
+	return constructorUserDto(aID, uID, uName)
 }
