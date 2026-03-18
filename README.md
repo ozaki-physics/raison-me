@@ -8,7 +8,7 @@
 ### delight
 ### growth
 ### info
-- [認証管理](./docs/info/authN/authN.md)  
+- [認証管理](./docs/info/authN/authN_ver03.md)  
 - [認可管理](./docs/info/authZ/authZ.md)  
 ### regung
 ### seed
