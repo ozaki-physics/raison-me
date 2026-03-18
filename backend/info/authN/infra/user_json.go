@@ -1,11 +1,23 @@
 package infra
 
 import (
+	"context"
 	"encoding/json"
 
 	"github.com/ozaki-physics/raison-me/info/authN/domain"
 	"github.com/ozaki-physics/raison-me/share"
 )
+
+type jsonUser struct {
+	User []user `json:"user"`
+}
+
+// struct を切り出したのは 保存時に json 用の struct に変換する必要があるから
+type user struct {
+	AccountID string `json:"account_id"`
+	Id        string `json:"id"`
+	Name      string `json:"name"`
+}
 
 const userPath = "./info/authN/infra/json/user.json"
 
@@ -34,14 +46,9 @@ func NewUserRepoJSON() (domain.UserRepo, error) {
 	return &userRepoJSON{d}, nil
 }
 
-func (urj *userRepoJSON) Insert(id domain.UserID, name domain.UserName) (*domain.User, error) {
+func (urj *userRepoJSON) Insert(ctx context.Context, u *domain.User) (*domain.User, error) {
 	// TODO: 雑に作っている
 	accountID, err := domain.ReNewAccountID("temp")
-	if err != nil {
-		return nil, err
-	}
-
-	u, err := domain.NewUser(accountID, id, name)
 	if err != nil {
 		return nil, err
 	}
@@ -54,7 +61,7 @@ func (urj *userRepoJSON) Insert(id domain.UserID, name domain.UserName) (*domain
 	return u, nil
 }
 
-func (urj *userRepoJSON) Fetch() ([]domain.User, error) {
+func (urj *userRepoJSON) Fetch(ctx context.Context) ([]domain.User, error) {
 	var users []domain.User
 	for _, v := range urj.data {
 		users = append(users, v)
@@ -62,13 +69,13 @@ func (urj *userRepoJSON) Fetch() ([]domain.User, error) {
 	return users, nil
 }
 
-func (urj *userRepoJSON) FindByAccountId(accountID domain.AccountID) (*domain.User, error) {
+func (urj *userRepoJSON) FindByAccountId(ctx context.Context, accountID domain.AccountID) (*domain.User, error) {
 	ud := urj.data[accountID]
 	// TODO: 存在しなかったときの扱いをどうしよう
 	return &ud, nil
 }
 
-func (urj *userRepoJSON) FindById(id domain.UserID) (*domain.User, error) {
+func (urj *userRepoJSON) FindById(ctx context.Context, id domain.UserID) (*domain.User, error) {
 	for _, v := range urj.data {
 		if v.ID() == id {
 			return &v, nil
@@ -78,7 +85,7 @@ func (urj *userRepoJSON) FindById(id domain.UserID) (*domain.User, error) {
 	return nil, nil
 }
 
-func (urj *userRepoJSON) FindByName(name domain.UserName) (*domain.User, error) {
+func (urj *userRepoJSON) FindByName(ctx context.Context, name domain.UserName) (*domain.User, error) {
 	for _, v := range urj.data {
 		if v.Name() == name {
 			return &v, nil
