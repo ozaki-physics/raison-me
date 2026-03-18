@@ -4,7 +4,7 @@ BEGIN;
 SET search_path TO app, public;
 
 INSERT INTO passwords (
-    passwords_id
+    password_id
   , account_id
   , password_hash
   , iat

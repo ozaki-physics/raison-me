@@ -253,6 +253,8 @@ WHERE
 `delete from schema_migrations;`
 `drop table capital_coin_transaction;`
 `drop table capital_coin;`
+`drop table passwords;`
+`drop table accounts;`
 
 ## DB コンテナのボリューム と 初回起動 について
 postgres:17 は既定で 次の環境変数のパスに データが格納される
