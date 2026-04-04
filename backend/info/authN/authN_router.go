@@ -3,7 +3,6 @@ package authn
 
 import (
 	"net/http"
-	"strconv"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/ozaki-physics/raison-me/info/authN/infra"
@@ -22,16 +21,10 @@ func Router(app config.App) chi.Router {
 		w.Write([]byte("これは info の authn だよ\n"))
 	})
 
-	// TOOD: 暫定的
-	r.Get("/json-users", SearchUserJSON)
-
 	// DI
 	userRepo, _ := infra.NewUserRepoSQL(app.GetPool())
 	passRepo, _ := infra.NewPassRepoSQL(app.GetPool())
-	passwordHasher, err := infra.NewPasswordBcrypt(app.GetConfig().GetAuthNPepper())
-	if err != nil {
-		panic(err)
-	}
+	passwordHasher, _ := infra.NewPasswordBcrypt(app.GetConfig().GetAuthNPepper())
 	authN, _ := usecase.NewAuthN(userRepo, passRepo, passwordHasher)
 	api := presen.NewAPICase(authN)
 
@@ -55,12 +48,4 @@ func Router(app config.App) chi.Router {
 	})
 
 	return r
-}
-
-// TODO: マジで暫定的 な プレゼンテーション層
-func SearchUserJSON(w http.ResponseWriter, r *http.Request) {
-	storagePath := infra.NewStoragePath()
-
-	userCount := storagePath.GetUser()
-	w.Write([]byte("User count: " + strconv.Itoa(userCount) + "\n"))
 }
