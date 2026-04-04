@@ -7,6 +7,8 @@ import (
 	"github.com/ozaki-physics/raison-me/info/authN/domain"
 )
 
+// NewUser は ID オブジェクトの生成でカバーされているから ここでは ReNewUser のみをテストする
+
 func TestReNewUser(t *testing.T) {
 	// テスト対象に渡す必要がある引数
 	type args struct {
@@ -34,12 +36,12 @@ func TestReNewUser(t *testing.T) {
 		{
 			name: "Userオブジェクトをプリミティブ型から生成できるか?",
 			args: args{
-				accountID: "a-123",
+				accountID: "018f2f4e-8c1d-7b33-a1aa-4c0b0f0e1d01",
 				userID:    "sena_us",
 				name:      "sena",
 			},
 			want: want{
-				accountID: "a-123",
+				accountID: "018f2f4e-8c1d-7b33-a1aa-4c0b0f0e1d01",
 				userID:    "sena_us",
 				name:      "sena",
 			},
@@ -51,29 +53,29 @@ func TestReNewUser(t *testing.T) {
 		{
 			name: "AccountIDのエラーを戻せるか?",
 			args: args{
-				accountID: "p-123",
+				accountID: "550e8400-e29b-41d4-a716-446655440000",
 				userID:    "sena_us",
 				name:      "sena",
 			},
 			want: want{
-				accountID: "a-123",
+				accountID: "018f2f4e-8c1d-7b33-a1aa-4c0b0f0e1d01",
 				userID:    "sena_us",
 				name:      "sena",
 			},
 			err: err{
 				hasErr: true,
-				msg:    "AccountIDに設定できないプレフィックスです",
+				msg:    "ID は UUID v7 の必要があります",
 			},
 		},
 		{
 			name: "UserIDのエラーを戻せるか?",
 			args: args{
-				accountID: "a-123",
+				accountID: "018f2f4e-8c1d-7b33-a1aa-4c0b0f0e1d01",
 				userID:    "",
 				name:      "sena",
 			},
 			want: want{
-				accountID: "a-123",
+				accountID: "018f2f4e-8c1d-7b33-a1aa-4c0b0f0e1d01",
 				userID:    "sena_us",
 				name:      "sena",
 			},
@@ -85,12 +87,12 @@ func TestReNewUser(t *testing.T) {
 		{
 			name: "UserNameのエラーを戻せるか?",
 			args: args{
-				accountID: "a-123",
+				accountID: "018f2f4e-8c1d-7b33-a1aa-4c0b0f0e1d01",
 				userID:    "sena_us",
 				name:      "",
 			},
 			want: want{
-				accountID: "a-123",
+				accountID: "018f2f4e-8c1d-7b33-a1aa-4c0b0f0e1d01",
 				userID:    "sena_us",
 				name:      "sena",
 			},
@@ -102,12 +104,12 @@ func TestReNewUser(t *testing.T) {
 		{
 			name: "エラーが複数あっても最初のエラーを戻せるか?",
 			args: args{
-				accountID: "a-123",
+				accountID: "018f2f4e-8c1d-7b33-a1aa-4c0b0f0e1d01",
 				userID:    "",
 				name:      "",
 			},
 			want: want{
-				accountID: "a-123",
+				accountID: "018f2f4e-8c1d-7b33-a1aa-4c0b0f0e1d01",
 				userID:    "sena_us",
 				name:      "sena",
 			},

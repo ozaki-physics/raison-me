@@ -8,6 +8,8 @@ import (
 	"github.com/ozaki-physics/raison-me/info/authN/domain"
 )
 
+// NewPass は ID オブジェクトの生成でカバーされているから ここでは ReNewPass のみをテストする
+
 func TestReNewPass(t *testing.T) {
 	// テスト対象に渡す必要がある引数
 	type args struct {
@@ -37,14 +39,14 @@ func TestReNewPass(t *testing.T) {
 		{
 			name: "Passオブジェクトをプリミティブ型から生成できるか?",
 			args: args{
-				passID:    "p-123",
-				accountID: "a-456",
+				passID:    "018f2f4e-8c1d-7c44-b2bb-5d1c1a1f2e01",
+				accountID: "018f2f4e-8c1d-7b33-a1aa-4c0b0f0e1d01",
 				password:  "$2a$10$UTmmO8T1nfe0vP28Hbl0.uUM/b00yVAY9Ck9QGv3ETqp1PAOtjhPO",
 				iat:       "2023-05-27T22:21:00+09:00",
 			},
 			want: want{
-				passID:    "p-123",
-				accountID: "a-456",
+				passID:    "018f2f4e-8c1d-7c44-b2bb-5d1c1a1f2e01",
+				accountID: "018f2f4e-8c1d-7b33-a1aa-4c0b0f0e1d01",
 				password:  "$2a$10$UTmmO8T1nfe0vP28Hbl0.uUM/b00yVAY9Ck9QGv3ETqp1PAOtjhPO",
 				iat:       "2023-05-27T22:21:00+09:00",
 			},
