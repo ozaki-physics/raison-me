@@ -5,8 +5,8 @@ SET search_path TO app, public;
 
 -- passwords テーブルの作成
 CREATE TABLE IF NOT EXISTS passwords (
-  password_id TEXT PRIMARY KEY,
-  account_id TEXT NOT NULL REFERENCES accounts(account_id),
+  password_id UUID PRIMARY KEY,
+  account_id UUID NOT NULL REFERENCES accounts(account_id),
   password_hash TEXT NOT NULL,
   iat TIMESTAMP NOT NULL
 );

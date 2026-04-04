@@ -5,7 +5,7 @@ SET search_path TO app, public;
 
 -- accounts テーブルの作成
 CREATE TABLE IF NOT EXISTS accounts (
-  account_id TEXT PRIMARY KEY,
+  account_id UUID PRIMARY KEY,
   user_id TEXT NOT NULL UNIQUE,
   user_name TEXT NOT NULL
 );

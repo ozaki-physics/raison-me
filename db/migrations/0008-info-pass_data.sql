@@ -10,9 +10,12 @@ INSERT INTO passwords (
   , iat
 )
 VALUES
-  ('p-001', 'a-001', 'hash_ozaki_001', '2022-12-17T12:28:00')
-, ('p-002', 'a-002', 'hash_sena_001', '2023-03-26T18:48:00')
-, ('p-003', 'a-003', 'hash_physics_001', '2023-09-10T10:23:00')
+  (
+      '018f2f4e-8c1d-7b33-a1aa-4c0b0f0e1d01'
+    , '018f2f4e-8c1d-7c44-b2bb-5d1c1a1f2e01'
+    , 'hash_ozaki_001'
+    , '2022-12-17T12:28:00'
+  )
 ;
 
 COMMIT;

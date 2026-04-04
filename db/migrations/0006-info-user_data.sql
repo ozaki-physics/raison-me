@@ -9,9 +9,11 @@ INSERT INTO accounts (
   , user_name
 )
 VALUES
-  ('a-001', 'ozaki', 'オザキ')
-, ('a-002', 'sena', 'セナ')
-, ('a-003', 'physics', '物理')
+  (
+      '018f2f4e-8c1d-7c44-b2bb-5d1c1a1f2e01'
+    , 'ozaki'
+    , 'オザキ'
+  )
 ;
 
 COMMIT;
