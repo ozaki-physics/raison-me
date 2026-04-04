@@ -34,10 +34,25 @@ type User interface {
 type authN struct {
 	userRepo domain.UserRepo
 	passRepo domain.PassRepo
+	hasher   domain.PasswordHasherRepo
 }
 
-func NewAuthN(u domain.UserRepo, p domain.PassRepo) (AuthN, UsecaseError) {
-	a := &authN{u, p}
+func NewAuthN(u domain.UserRepo, p domain.PassRepo, h domain.PasswordHasherRepo) (AuthN, UsecaseError) {
+	if u == nil {
+		return nil, NewUsecaseError("UserRepo が設定されていません")
+	}
+	if p == nil {
+		return nil, NewUsecaseError("PassRepo が設定されていません")
+	}
+	if h == nil {
+		return nil, NewUsecaseError("PasswordHasher が設定されていません")
+	}
+
+	a := &authN{
+		userRepo: u,
+		passRepo: p,
+		hasher:   h,
+	}
 	return a, nil
 }
 
@@ -69,7 +84,11 @@ func (a *authN) Create(ctx context.Context, userName string, userID string, pass
 	if err != nil {
 		return nil, err
 	}
-	password, err := domain.NewPassword(passPlane)
+	passHash, err3 := a.hasher.Hash(passPlane)
+	if err3 != nil {
+		return nil, WrapUsecaseError("パスワードの生成に失敗しました", err3)
+	}
+	password, err := domain.NewPassword(passHash)
 	if err != nil {
 		return nil, err
 	}
@@ -111,12 +130,11 @@ func (a *authN) SignIn(ctx context.Context, userID string, passwordPlane string)
 	}
 
 	// パスワードが一致するか
-	isOK, err := p.IsLogin(passwordPlane)
-	if err != nil {
+	if err := a.hasher.Verify(p.Password(), passwordPlane); err != nil {
 		return false, WrapUsecaseError("ログインに失敗しました", err)
 	}
 
-	return isOK, nil
+	return true, nil
 }
 
 func (a *authN) SignOut(ctx context.Context, userID string) (bool, UsecaseError) {

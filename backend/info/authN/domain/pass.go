@@ -55,10 +55,6 @@ func ReNewPass(passID string, accountID string, password string, iat time.Time) 
 	return constructorPass(pID, aID, p, at)
 }
 
-func (p *Pass) IsLogin(inputPassword string) (bool, DomainError) {
-	return p.password.isSame(inputPassword)
-}
-
 // 以下ゲッター
 
 func (p *Pass) ID() PassID {

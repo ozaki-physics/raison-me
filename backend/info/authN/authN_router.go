@@ -28,7 +28,8 @@ func Router(app config.App) chi.Router {
 	// DI
 	userRepo, _ := infra.NewUserRepoSQL(app.GetPool())
 	passRepo, _ := infra.NewPassRepoSQL(app.GetPool())
-	authN, _ := usecase.NewAuthN(userRepo, passRepo)
+	passwordHasher := infra.NewPasswordBcrypt()
+	authN, _ := usecase.NewAuthN(userRepo, passRepo, passwordHasher)
 	api := presen.NewAPICase(authN)
 
 	// TODO: 用途不明

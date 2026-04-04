@@ -37,7 +37,7 @@ func (prs *passRepoSQL) Insert(ctx context.Context, pass domain.Pass) (*domain.P
 	password := pass.Password()
 	iat := pass.IssuedAt()
 
-	_, err := prs.pool.Exec(ctx, sql_statement, pID.Val(), aID.Val(), password.HashText(), iat.MyFormat())
+	_, err := prs.pool.Exec(ctx, sql_statement, pID.Val(), aID.Val(), password.HashedText(), iat.MyFormat())
 	if err != nil {
 		log.Printf("exec: %v\n", err)
 		return nil, err
