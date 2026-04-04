@@ -19,6 +19,7 @@ type Config interface {
 	GetPort() string
 	// TODO: 暫定の認証
 	GetSampleAPIToken() string
+	GetAuthNPepper() string
 }
 
 func NewConfig() Config {
@@ -38,6 +39,8 @@ func NewConfig() Config {
 	// TODO: 暫定の認証
 	sampleAPIToken := readFile[string](isCloud, "SAMPLE_API_TOKEN")
 
+	authNPepper := readFile[string](isCloud, "AUTHN_PASSWORD_PEPPER")
+
 	c := config{
 		isLive:         isLive,
 		isCloud:        isCloud,
@@ -46,6 +49,7 @@ func NewConfig() Config {
 		supabaseConfig: supabaseConfig,
 		port:           port,
 		sampleAPIToken: sampleAPIToken,
+		authNPepper:    authNPepper,
 	}
 	return &c
 }
@@ -58,6 +62,7 @@ type config struct {
 	supabaseConfig supabaseConfig
 	port           string
 	sampleAPIToken string
+	authNPepper    string
 }
 
 func (c *config) IsLive() bool {
@@ -89,6 +94,10 @@ func (c *config) GetPort() string {
 
 func (c *config) GetSampleAPIToken() string {
 	return c.sampleAPIToken
+}
+
+func (c *config) GetAuthNPepper() string {
+	return c.authNPepper
 }
 
 type supabaseConfig struct {
