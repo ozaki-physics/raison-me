@@ -6,16 +6,18 @@ type PassID struct {
 }
 
 func constructorPassID(id id) (PassID, DomainError) {
-	if id.prefixID != "p" {
-		return PassID{NilID()}, NewDomainError("PassIDに設定できないプレフィックスです")
+	if id.IsNilID() {
+		return PassID{NilID()}, NewDomainError("PassIDが不正です")
 	}
-	// TODO: ユーザー+管理者 で一意になるように 自動で採番
+
+	// ユーザー+管理者 で一意にしたい
+	// UUID v7 なら衝突の可能性は 限りなく低いので チェックはしない
 
 	return PassID{id}, nil
 }
 
 func NewPassID() (PassID, DomainError) {
-	id, err := NewID("p")
+	id, err := NewID()
 	if err != nil {
 		return PassID{NilID()}, err
 	}

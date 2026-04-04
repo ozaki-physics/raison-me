@@ -6,19 +6,22 @@ type AccountID struct {
 }
 
 func constructorAccountID(id id) (AccountID, DomainError) {
-	if id.prefixID != "a" {
-		return AccountID{NilID()}, NewDomainError("AccountIDに設定できないプレフィックスです")
+	if id.IsNilID() {
+		return AccountID{NilID()}, NewDomainError("AccountIDが不正です")
 	}
-	// TODO: ユーザー+管理者 で一意になるように 自動で採番
+
+	// ユーザー+管理者 で一意にしたい
+	// UUID v7 なら衝突の可能性は 限りなく低いので チェックはしない
 
 	return AccountID{id}, nil
 }
 
 func NewAccountID() (AccountID, DomainError) {
-	id, err := NewID("a")
+	id, err := NewID()
 	if err != nil {
 		return AccountID{NilID()}, err
 	}
+
 	return constructorAccountID(id)
 }
 

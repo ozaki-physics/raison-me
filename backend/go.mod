@@ -6,9 +6,9 @@ require (
 	cloud.google.com/go/bigquery v1.66.2
 	cloud.google.com/go/secretmanager v1.14.5
 	github.com/go-chi/chi/v5 v5.2.1
+	github.com/google/uuid v1.6.0
 	github.com/jackc/pgx/v5 v5.7.6
 	github.com/line/line-bot-sdk-go/v7 v7.21.0
-	github.com/rs/xid v1.6.0
 	golang.org/x/crypto v0.37.0
 	google.golang.org/api v0.224.0
 )
@@ -26,7 +26,6 @@ require (
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/google/flatbuffers v23.5.26+incompatible // indirect
 	github.com/google/s2a-go v0.1.9 // indirect
-	github.com/google/uuid v1.6.0 // indirect
 	github.com/googleapis/enterprise-certificate-proxy v0.3.5 // indirect
 	github.com/googleapis/gax-go/v2 v2.14.1 // indirect
 	github.com/jackc/pgpassfile v1.0.0 // indirect

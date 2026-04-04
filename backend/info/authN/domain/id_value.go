@@ -1,71 +1,57 @@
 package domain
 
-import (
-	"strings"
-
-	"github.com/rs/xid"
-)
+import "github.com/google/uuid"
 
 type id struct {
-	prefixID string
-	value    string
+	value uuid.UUID
 }
 
-func constructorID(prefixID string, val string) (id, DomainError) {
-	if prefixID == "" {
-		return NilID(), NewDomainError("ID生成時のプレフィックスが存在しません")
-	}
-	if val == "" {
+func constructorID(val uuid.UUID) (id, DomainError) {
+	if val == uuid.Nil {
 		return NilID(), NewDomainError("ID生成時の値が存在しません")
 	}
-
-	id := id{prefixID, val}
-	if len(id.Val()) > 30 {
-		return id, NewDomainError("ID生成時のプレフィックスが長すぎます")
+	if val.Version() != 7 {
+		return NilID(), NewDomainError("ID は UUID v7 の必要があります")
 	}
 
-	return id, nil
+	return id{value: val}, nil
 }
 
-func NewID(prefixID string) (id, DomainError) {
-	guid := xid.New()
-	return constructorID(prefixID, guid.String())
+func NewID() (id, DomainError) {
+	guid, err := uuid.NewV7()
+	if err != nil {
+		return NilID(), NewDomainError("ID の生成に失敗しました")
+	}
+
+	return constructorID(guid)
 }
 
 func ReNewID(data string) (id, DomainError) {
-	sp := strings.Split(data, "-")
-	var val string
+	if data == "" {
+		return NilID(), NewDomainError("ID 生成時の値が存在しません")
+	}
 
 	// 本来は 値オブジェクトが作れた時点で不整合な状態にはならないから
 	// 復元するときにも不整合な状態は発生しないはず
 	// もしも ストレージに直接 ID を書き込んで それが不整合だったときを考える
-	if len(sp) == 1 {
-		return NilID(), NewDomainError("ストレージのIDフォーマットが不正です")
+	guid, err := uuid.Parse(data)
+	if err != nil {
+		return NilID(), NewDomainError("ストレージの ID フォーマットが不正です")
 	}
 
-	if len(sp) >= 3 {
-		val = strings.Join(sp[1:], "-")
-	} else {
-		val = sp[1]
-	}
-	return constructorID(sp[0], val)
+	return constructorID(guid)
 }
 
 func NilID() id {
-	nilID, _ := constructorID("nil", "nil")
-	return nilID
+	return id{value: uuid.Nil}
 }
 
 func (id *id) IsNilID() bool {
-	return *id == NilID()
+	return id.value == uuid.Nil
 }
 
 // 以下ゲッター
 
 func (id *id) Val() string {
-	return id.prefixID + "-" + id.value
-}
-
-func (id *id) PrefixID() string {
-	return id.prefixID
+	return id.value.String()
 }
