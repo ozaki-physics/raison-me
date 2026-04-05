@@ -9,21 +9,27 @@ import (
 )
 
 type ApiCase interface {
-	// ユーザー を 作成
-	CreateUser(w http.ResponseWriter, r *http.Request) error
 	// ユーザー で サインイン
 	SignIn(w http.ResponseWriter, r *http.Request) error
 	// ユーザー で サインアウト
-	// SignOut(w http.ResponseWriter, r *http.Request) error
-	// // ユーザー一覧
+	SignOut(w http.ResponseWriter, r *http.Request) error
+
+	// ユーザー を 作成
+	CreateUser(w http.ResponseWriter, r *http.Request) error
+	// ユーザー一覧
 	GetUserList(w http.ResponseWriter, r *http.Request) error
-	// // ユーザーを検索
+	// ユーザーを検索
 	SearchUser(w http.ResponseWriter, r *http.Request, req string) error
 
+	// 自分自身 の 情報を取得
+	GetMe(w http.ResponseWriter, r *http.Request) error
+
 	// IDトークン の 発行
-	IDTokenGenerate(w http.ResponseWriter, r *http.Request) error
+	GenerateToken(w http.ResponseWriter, r *http.Request) error
 	// IDトークン が 有効か
-	IsIDTokenOK(w http.ResponseWriter, r *http.Request) error
+	VerifyToken(w http.ResponseWriter, r *http.Request) error
+	// IDトークン の 更新
+	RefreshToken(w http.ResponseWriter, r *http.Request) error
 }
 
 type apiCase struct {
@@ -84,6 +90,12 @@ func (api *apiCase) SignIn(w http.ResponseWriter, r *http.Request) error {
 }
 
 // TODO: 動作確認用で 暫定な実装
+func (api *apiCase) SignOut(w http.ResponseWriter, r *http.Request) error {
+	w.Write([]byte("ログアウトに失敗しました\n"))
+	return nil
+}
+
+// TODO: 動作確認用で 暫定な実装
 func (api *apiCase) GetUserList(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 
@@ -113,7 +125,14 @@ func (api *apiCase) SearchUser(w http.ResponseWriter, r *http.Request, param str
 	return nil
 }
 
-func (api *apiCase) IDTokenGenerate(w http.ResponseWriter, r *http.Request) error {
+// TODO: 動作確認用で 暫定な実装
+func (api *apiCase) GetMe(w http.ResponseWriter, r *http.Request) error {
+	w.Write([]byte("自分自身の情報を取得しました\n"))
+	return nil
+}
+
+// TODO: 動作確認用で 暫定な実装
+func (api *apiCase) GenerateToken(w http.ResponseWriter, r *http.Request) error {
 	// TODO: 未実装
 	fmt.Println("best")
 	var jsonBody map[string]interface{}
@@ -124,7 +143,8 @@ func (api *apiCase) IDTokenGenerate(w http.ResponseWriter, r *http.Request) erro
 	return nil
 }
 
-func (api *apiCase) IsIDTokenOK(w http.ResponseWriter, r *http.Request) error {
+// TODO: 動作確認用で 暫定な実装
+func (api *apiCase) VerifyToken(w http.ResponseWriter, r *http.Request) error {
 	// TODO: 未実装
 	fmt.Println("lost")
 
@@ -138,5 +158,11 @@ func (api *apiCase) IsIDTokenOK(w http.ResponseWriter, r *http.Request) error {
 
 	fmt.Println(r.FormValue("hello"))
 	fmt.Println(r.PostFormValue("hello"))
+	return nil
+}
+
+// TODO: 動作確認用で 暫定な実装
+func (api *apiCase) RefreshToken(w http.ResponseWriter, r *http.Request) error {
+	fmt.Println("refresh")
 	return nil
 }

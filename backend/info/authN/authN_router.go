@@ -28,17 +28,12 @@ func Router(app config.App) chi.Router {
 	authN, _ := usecase.NewAuthN(userRepo, passRepo, passwordHasher)
 	api := presen.NewAPICase(authN)
 
-	// TODO: 用途不明
-	r.Route("/entry", func(r chi.Router) {
-		r.Get("/", share.NewApiHandler(api.CreateUser).Handler)
-		r.Post("/", share.NewApiHandler(api.SignIn).Handler)
-	})
-	r.Route("/token", func(r chi.Router) {
-		r.Post("/", share.NewApiHandler(api.IDTokenGenerate).Handler)
-	})
+	r.Post("/signin", share.NewApiHandler(api.SignIn).Handler)
+	r.Get("/signout", share.NewApiHandler(api.SignOut).Handler)
+	r.Get("/me", share.NewApiHandler(api.GetMe).Handler)
 
 	r.Route("/users", func(r chi.Router) {
-		r.Get("/", share.NewApiHandler(api.GetUserList).Handler)
+		r.Post("/", share.NewApiHandler(api.CreateUser).Handler)
 		r.Get("/{userID}", share.NewApiHandler(
 			func(w http.ResponseWriter, req *http.Request) error {
 				userID := chi.URLParam(req, "userID")
@@ -47,5 +42,17 @@ func Router(app config.App) chi.Router {
 		).Handler)
 	})
 
-	return r
+	r.Route("/token", func(r chi.Router) {
+		r.Post("/", share.NewApiHandler(api.GenerateToken).Handler)
+		r.Get("/verify", share.NewApiHandler(api.VerifyToken).Handler)
+		r.Post("/refresh", share.NewApiHandler(api.RefreshToken).Handler)
+	})
+
+	// TODO: 暫定
+	r.Get("/users-all", share.NewApiHandler(api.GetUserList).Handler)
+
+	// 機能ごとで バージョニング するため
+	v1 := chi.NewRouter()
+	v1.Mount("/v1", r)
+	return v1
 }
