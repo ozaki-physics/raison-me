@@ -23,4 +23,5 @@
 - [index](./coding-think-mind.md): コーディング思想
 - [deployment-guide](./deployment-guide.md): deploy手順 (開発(development) / 検証(staging) / 本番(production), Docker コンテナ)
 - [db-connection](./db-connection.md): DB 接続と Context の設計
+- [0001-authn-token](./0001-authn-token.md): AuthN token の 設計
 - [error-design](./error-design.md): エラー設計

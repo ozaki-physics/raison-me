@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS passwords (
   password_id UUID PRIMARY KEY,
   account_id UUID NOT NULL REFERENCES accounts(account_id),
   password_hash TEXT NOT NULL,
-  iat TIMESTAMP NOT NULL
+  iat TIMESTAMPTZ NOT NULL
 );
 
 COMMIT;
