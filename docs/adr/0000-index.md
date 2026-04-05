@@ -38,3 +38,4 @@
 - [0000-template](./0000-template.md): ADR テンプレート
 - [0001-password-hash-parameter-handling](./0001-password-hash-parameter-handling.md): パスワードハッシュにおけるソルト/ペッパーの扱い
 - [0002-internal-id-strategy-for-info](./0002-internal-id-strategy-for-info.md): info 系内部 ID を UUID v7 に統一する
+- [0003-custom-jwt-authentication-strategy](./0003-custom-jwt-authentication-strategy.md): 独自 JWT と refresh token を使う認証方式を採用する
