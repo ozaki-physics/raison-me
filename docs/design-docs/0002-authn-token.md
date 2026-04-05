@@ -183,4 +183,4 @@ DB を参照するのは `signin`、`refresh`、`signout` のときだけにす�
 
 ## 参考
 - [ADR 0003](../adr/0003-custom-jwt-authentication-strategy.md)
-- [db-connection](./db-connection.md)
+- [db-connection](./0001-db-connection.md)
