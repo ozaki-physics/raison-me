@@ -44,9 +44,18 @@ func NewAPICase(authn usecase.AuthN) ApiCase {
 func (api *apiCase) CreateUser(w http.ResponseWriter, r *http.Request) error {
 	ctx := r.Context()
 
-	userName := r.FormValue("userName")
-	userID := r.FormValue("userID")
-	passPlane := r.FormValue("password")
+	type createUserRequest struct {
+		UserName string `json:"userName"`
+		UserID   string `json:"userID"`
+		Password string `json:"password"`
+	}
+	var req createUserRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		return err
+	}
+	userName := req.UserName
+	userID := req.UserID
+	passPlane := req.Password
 
 	saveUserDto, err := api.AuthN.Create(ctx, userName, userID, passPlane)
 	if err != nil {
