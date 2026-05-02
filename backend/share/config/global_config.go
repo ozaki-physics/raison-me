@@ -20,6 +20,8 @@ type Config interface {
 	// TODO: 暫定の認証
 	GetSampleAPIToken() string
 	GetAuthNPepper() string
+	GetAuthNJWTSecret() string
+	GetAuthNRefreshTokenPepper() string
 }
 
 func NewConfig() Config {
@@ -40,29 +42,35 @@ func NewConfig() Config {
 	sampleAPIToken := readFile[string](isCloud, "SAMPLE_API_TOKEN")
 
 	authNPepper := readFile[string](isCloud, "AUTHN_PASSWORD_PEPPER")
+	authNJWTSecret := readFile[string](isCloud, "AUTHN_JWT_HS256_SECRET")
+	authNRefreshTokenPepper := readFile[string](isCloud, "AUTHN_REFRESH_TOKEN_PEPPER")
 
 	c := config{
-		isLive:         isLive,
-		isCloud:        isCloud,
-		gcpProjectID:   gcpProjectID,
-		dataSourceName: dataSourceName,
-		supabaseConfig: supabaseConfig,
-		port:           port,
-		sampleAPIToken: sampleAPIToken,
-		authNPepper:    authNPepper,
+		isLive:                  isLive,
+		isCloud:                 isCloud,
+		gcpProjectID:            gcpProjectID,
+		dataSourceName:          dataSourceName,
+		supabaseConfig:          supabaseConfig,
+		port:                    port,
+		sampleAPIToken:          sampleAPIToken,
+		authNPepper:             authNPepper,
+		authNJWTSecret:          authNJWTSecret,
+		authNRefreshTokenPepper: authNRefreshTokenPepper,
 	}
 	return &c
 }
 
 type config struct {
-	isLive         bool
-	isCloud        bool
-	gcpProjectID   string
-	dataSourceName string
-	supabaseConfig supabaseConfig
-	port           string
-	sampleAPIToken string
-	authNPepper    string
+	isLive                  bool
+	isCloud                 bool
+	gcpProjectID            string
+	dataSourceName          string
+	supabaseConfig          supabaseConfig
+	port                    string
+	sampleAPIToken          string
+	authNPepper             string
+	authNJWTSecret          string
+	authNRefreshTokenPepper string
 }
 
 func (c *config) IsLive() bool {
@@ -98,6 +106,14 @@ func (c *config) GetSampleAPIToken() string {
 
 func (c *config) GetAuthNPepper() string {
 	return c.authNPepper
+}
+
+func (c *config) GetAuthNJWTSecret() string {
+	return c.authNJWTSecret
+}
+
+func (c *config) GetAuthNRefreshTokenPepper() string {
+	return c.authNRefreshTokenPepper
 }
 
 type supabaseConfig struct {
