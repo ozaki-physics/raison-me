@@ -26,6 +26,8 @@ Go の標準に従い、整形は `gofmt` を前提にします。
 インデントはタブ、公開識別子は PascalCase、非公開は camelCase を使います。
 ファイル名は既存コードに合わせて lower_snake_case とし、例は `user_id_value.go`、`json_detail_test.go` です。
 ルータ定義は `*_router.go`、層構造は `domain/`、`usecase/`、`infra` または `infrastructure/`、`presentation/` を踏襲してください。
+`dto` は usecase 層 から presen 層 に渡すオブジェクト
+ドメイン知識を presen 層で操作させないために dto の型は プリミティブ寄り にする
 
 ## テスト方針
 テストは標準の `testing` パッケージを使い、対象ファイルの近くに `*_test.go` として配置します。
