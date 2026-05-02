@@ -246,6 +246,21 @@ WHERE
 ;
 ```
 
+- テーブル内にあるカラムの型を調べる
+```sql
+SELECT
+  column_name,
+  data_type,
+  udt_name,
+  is_nullable,
+  column_default
+FROM information_schema.columns
+WHERE table_schema = 'app'
+  AND table_name = 'passwords'
+ORDER BY ordinal_position
+;
+```
+
 ## ローカル の PostgreSQL で 最初からやり直したいとき
 1. コンテナごと削除する
 2. テーブルを削除する
