@@ -23,5 +23,5 @@
 - [index](./coding-think-mind.md): コーディング思想
 - [0001-db-connection](./0001-db-connection.md): DB 接続と Context の設計
 - [0002-authn-token](./0002-authn-token.md): AuthN token の 設計
+- [0003-error-design](./0003-error-design.md): レイヤ間のエラー設計
 - [deployment-guide](./deployment-guide.md): deploy手順 (開発(development) / 検証(staging) / 本番(production), Docker コンテナ)
-- [error-design](./error-design.md): エラー設計
