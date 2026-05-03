@@ -72,6 +72,15 @@ spec:
         - mountPath: /app/share/secrets/SAMPLE_API_TOKEN
           name: volume-SAMPLE_API_TOKEN
           readOnly: true
+        - mountPath: /app/share/secrets/AUTHN_JWT_HS256_SECRET
+          name: volume-AUTHN_JWT_HS256_SECRET
+          readOnly: true
+        - mountPath: /app/share/secrets/AUTHN_PASSWORD_PEPPER
+          name: volume-AUTHN_PASSWORD_PEPPER
+          readOnly: true
+        - mountPath: /app/share/secrets/AUTHN_REFRESH_TOKEN_PEPPER
+          name: volume-AUTHN_REFRESH_TOKEN_PEPPER
+          readOnly: true
       # Secret Manager から 取得 した シークレット を マウント するため
       # なぜ 複数書くか -> Secret Manager は 1つの シークレット に 1つの ボリューム を 対応 させる 必要がある
       # また ボリューム を 1個のディレクトリに まとめられない
@@ -147,6 +156,24 @@ spec:
           items:
           - key: latest
             path: SAMPLE_API_TOKEN
+      - name: volume-AUTHN_JWT_HS256_SECRET
+        secret:
+          secretName: AUTHN_JWT_HS256_SECRET
+          items:
+          - key: latest
+            path: AUTHN_JWT_HS256_SECRET
+      - name: volume-AUTHN_PASSWORD_PEPPER
+        secret:
+          secretName: AUTHN_PASSWORD_PEPPER
+          items:
+          - key: latest
+            path: AUTHN_PASSWORD_PEPPER
+      - name: volume-AUTHN_REFRESH_TOKEN_PEPPER
+        secret:
+          secretName: AUTHN_REFRESH_TOKEN_PEPPER
+          items:
+          - key: latest
+            path: AUTHN_REFRESH_TOKEN_PEPPER
   # Cloud Run の トラフィック設定
   traffic:
   - percent: 100

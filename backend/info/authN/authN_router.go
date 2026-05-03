@@ -2,6 +2,7 @@
 package authn
 
 import (
+	"log"
 	"net/http"
 
 	"github.com/go-chi/chi/v5"
@@ -31,7 +32,7 @@ func Router(app config.App) chi.Router {
 	refreshTokenGenerator := infra.NewRefreshTokenRandom()
 	refreshTokenHasher, _ := infra.NewRefreshTokenSHA256(app.GetConfig().GetAuthNRefreshTokenPepper())
 
-	authN, _ := usecase.NewAuthN(
+	authN, err := usecase.NewAuthN(
 		userRepo,
 		passRepo,
 		refreshTokenRepo,
@@ -40,7 +41,10 @@ func Router(app config.App) chi.Router {
 		refreshTokenGenerator,
 		refreshTokenHasher,
 	)
-	api := presen.NewAPICase(authN)
+	if err != nil {
+		log.Fatalf("authN の ユースケース 初期化に失敗しました: %v", err)
+	}
+	api := presen.NewAPICase(authN, app.GetConfig().IsLive())
 
 	// 認証 が 不要な エンドポイント
 	r.Group(func(r chi.Router) {

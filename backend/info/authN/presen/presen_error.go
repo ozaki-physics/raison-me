@@ -10,7 +10,7 @@ type PresenError interface {
 	Unwrap() error
 	FullError() string
 	// ステータスコードを 指定するため
-	StatusCoder() int
+	StatusCode() int
 }
 
 // 実体
@@ -56,6 +56,6 @@ func (de *presenError) Unwrap() error {
 }
 
 // ステータスコードを返す
-func (de *presenError) StatusCoder() int {
+func (de *presenError) StatusCode() int {
 	return de.statusCode
 }
