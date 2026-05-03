@@ -4,6 +4,11 @@
   "dockerComposeFile": [
     "compose.yaml"
   ],
+  // VS Code が起動時に立ち上げるコンテナのサービス名
+  "runServices": ["local_dev", "local_db"],
+  // VS Code が終了時にコンテナをどうするか
+  "shutdownAction": "stopCompose",
+
   // 'service' プロパティは、VS Code が使用すべきコンテナのサービス名
 	"service": "local_dev",
   // VS Code が接続時にデフォルトで開くパス
@@ -20,7 +25,10 @@
         // Markdown でグラフを書く
         "bierner.markdown-mermaid",
         // svelte 用の拡張機能
-        "svelte.svelte-vscode"
+        "svelte.svelte-vscode",
+        // GitHub Copilot
+        "github.copilot-chat"
+
       ]
     }
   },

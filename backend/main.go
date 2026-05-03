@@ -3,7 +3,6 @@ package main
 import (
 	"log"
 	"net/http"
-	"os"
 
 	"github.com/go-chi/chi/v5"
 	"github.com/go-chi/chi/v5/middleware"
@@ -13,8 +12,8 @@ import (
 	"github.com/ozaki-physics/raison-me/info"
 	"github.com/ozaki-physics/raison-me/regung"
 	"github.com/ozaki-physics/raison-me/seed"
-	globalConfig "github.com/ozaki-physics/raison-me/share/config"
-	"github.com/ozaki-physics/raison-me/trybigquery"
+	"github.com/ozaki-physics/raison-me/share/config"
+	sharemiddleware "github.com/ozaki-physics/raison-me/share/middleware"
 	"github.com/ozaki-physics/raison-me/zeit"
 )
 
@@ -22,16 +21,25 @@ func main() {
 	// fmt.Println("hello world!")
 	// helloworld.Main()
 
-	trybigquery.Main()
-	// Run()
+	// trybigquery.Try()
+	// trylocaldb.Try()
+	// trysupabase.Try()
+	Run()
 }
 
 func Run() {
-	globalConfig := globalConfig.NewConfig()
-	log.Printf("globalConfig: %v", globalConfig)
+	// 環境変数 や DB コネクションプール の 初期化
+	app := config.NewAppBuild()
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
+	// 暫定の認証ミドルウェア
+	r.Use(sharemiddleware.CustomMiddleware(app.GetConfig()))
+
+	// ヘルスチェック用のエンドポイント
+	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("OK"))
+	})
 
 	// 静的ファイル の 配信
 	r.Mount("/", staticFileRouter())
@@ -42,17 +50,23 @@ func Run() {
 	r.Mount("/capital", capital.Router())
 	r.Mount("/delight", delight.Router())
 	r.Mount("/growth", growth.Router())
-	r.Mount("/info", info.Router())
+	r.Mount("/info", info.Router(app))
 	r.Mount("/regung", regung.Router())
 	r.Mount("/seed", seed.Router())
 	r.Mount("/zeit", zeit.Router())
 
-	port := os.Getenv("PORT")
+	port := app.GetConfig().GetPort()
 	if port == "" {
 		port = "8081"
 		log.Printf("Defaulting to port %s", port)
 	}
 	log.Printf("Listening on port %s", port)
+
+	// ローカル開発環境 なら ローカルホスト の URL も表示
+	if !app.GetConfig().IsLive() {
+		localPort := "5001"
+		log.Printf("http://localhost:%s/", localPort)
+	}
 
 	// サーバ起動
 	if err := http.ListenAndServe(":"+port, r); err != nil {

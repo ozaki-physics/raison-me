@@ -27,3 +27,7 @@ cloud-run-service.template.yaml
 *_persist.json
 # ただし サンプル になる json ファイル は git 管理する
 !*example.json
+
+# 非公開情報 を 環境変数 の 代わり に ファイル で 管理する
+*/secrets/*
+!*/secrets/*.example

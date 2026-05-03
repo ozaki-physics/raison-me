@@ -1,0 +1,15 @@
+{
+  "sqltools.connections": [
+    {
+      "ssh": "Disabled",
+      "previewLimit": 50,
+      "server": "local_db",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "username": "dev_user",
+      "password": "dev_pass",
+      "database": "raison_me_db",
+      "name": "local_db-vscode"
+    }
+  ]
+}

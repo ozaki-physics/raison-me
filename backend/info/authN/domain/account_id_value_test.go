@@ -2,43 +2,27 @@ package domain_test
 
 import (
 	"errors"
-	"strings"
 	"testing"
 
+	"github.com/google/uuid"
 	"github.com/ozaki-physics/raison-me/info/authN/domain"
 )
 
 func TestNewAccountID(t *testing.T) {
 	// テスト対象に渡す必要がある引数
-	type args struct {
-	}
-	type want struct {
-		first  string
-		second string
-	}
-	type err struct {
-		hasErr bool
-		msg    string
-	}
+	type args struct{}
 	// テスト用の値たち
 	tests := []struct {
-		name string
-		args args
-		want want
-		err  err
+		name   string
+		args   args
+		want   string
+		hasErr bool
 	}{
-		// テストケース
 		{
-			name: "AccountIDが生成できるか?",
-			args: args{},
-			want: want{
-				first:  "a",
-				second: "",
-			},
-			err: err{
-				hasErr: false,
-				msg:    "",
-			},
+			name:   "AccountIDが生成できるか?",
+			args:   args{},
+			want:   "", // 生成されるIDは毎回変わるため、特定の値を期待することはできない
+			hasErr: false,
 		},
 	}
 
@@ -46,25 +30,34 @@ func TestNewAccountID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := domain.NewAccountID()
 
-			if (err != nil) != tt.err.hasErr {
-				t.Errorf("実際の error = %v, hasErr %v", err, tt.err.hasErr)
+			if (err != nil) != tt.hasErr {
+				t.Errorf("実際の error = %v, hasErr %v", err, tt.hasErr)
 				return
 			}
 
-			if (err != nil) && tt.err.hasErr {
+			if (err != nil) && tt.hasErr {
 				var de = domain.NewDomainError("")
 				if errors.As(err, &de) {
-					if err.Error() != tt.err.msg {
-						t.Errorf("実際のエラーは %v, 想定されるエラーは %v", err.Error(), tt.err.msg)
+					if err.Error() != tt.want {
+						t.Errorf("実際のエラーは %v, 想定されるエラーは %v", err.Error(), tt.want)
 					}
 				} else {
-					t.Errorf("実際の error = %v, hasErr %v", err, tt.err.hasErr)
+					t.Errorf("実際の error = %v, hasErr %v", err, tt.hasErr)
 				}
 				return
 			}
 
-			if strings.Split(got.Val(), "-")[0] != tt.want.first {
-				t.Errorf("実際の値は %v, 想定した値は %v", got.Val(), tt.want)
+			if err != nil {
+				t.Errorf("NewID() error = %v", err)
+			}
+
+			parsed, err02 := uuid.Parse(got.Val())
+			if err02 != nil {
+				t.Errorf("uuid.Parse() error = %v", err02)
+			}
+
+			if parsed.Version() != 7 {
+				t.Errorf("実際のバージョンは %v, 想定した値は 7", parsed.Version())
 			}
 		})
 	}
@@ -90,34 +83,17 @@ func TestReNewAccountID(t *testing.T) {
 		want want
 		err  err
 	}{
-		// テストケース
 		{
-			name: "文字列を渡してAccountIDが生成できるか?",
-			args: args{
-				data: "a-asdf",
-			},
-			want: want{
-				first:  "a",
-				second: "asdf",
-			},
-			err: err{
-				hasErr: false,
-				msg:    "",
-			},
+			name: "UUID v7文字列を渡してAccountIDが生成できるか?",
+			args: args{data: "018f2f4e-8c1d-7b33-a1aa-4c0b0f0e1d01"},
+			want: want{first: "018f2f4e-8c1d-7b33-a1aa-4c0b0f0e1d01"},
+			err:  err{hasErr: false, msg: ""},
 		},
 		{
-			name: "AccountIDに適さないプレフィックスでエラーになるか?",
-			args: args{
-				data: "u-asdf",
-			},
-			want: want{
-				first:  "u",
-				second: "asdf",
-			},
-			err: err{
-				hasErr: true,
-				msg:    "AccountIDに設定できないプレフィックスです",
-			},
+			name: "UUID v4文字列ではエラーになるか?",
+			args: args{data: "550e8400-e29b-41d4-a716-446655440000"},
+			want: want{first: "", second: ""},
+			err:  err{hasErr: true, msg: "ID は UUID v7 の必要があります"},
 		},
 	}
 
@@ -142,8 +118,8 @@ func TestReNewAccountID(t *testing.T) {
 				return
 			}
 
-			if strings.Split(got.Val(), "-")[0] != tt.want.first {
-				t.Errorf("実際の値は %v, 想定した値は %v", got.Val(), tt.want)
+			if got.Val() != tt.want.first {
+				t.Errorf("実際の値は %v, 想定した値は %v", got.Val(), tt.want.first)
 			}
 		})
 	}

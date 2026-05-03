@@ -1,0 +1,6 @@
+# compose.yaml 内で ${VAR} 補完に使うため .env ファイルを .devcontainer ディレクトリに追加した
+# だから .gitignore で 除外する
+.env
+.env.*
+!.env.example
+!.env.test

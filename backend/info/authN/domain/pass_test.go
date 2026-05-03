@@ -3,9 +3,12 @@ package domain_test
 import (
 	"errors"
 	"testing"
+	"time"
 
 	"github.com/ozaki-physics/raison-me/info/authN/domain"
 )
+
+// NewPass は ID オブジェクトの生成でカバーされているから ここでは ReNewPass のみをテストする
 
 func TestReNewPass(t *testing.T) {
 	// テスト対象に渡す必要がある引数
@@ -36,14 +39,14 @@ func TestReNewPass(t *testing.T) {
 		{
 			name: "Passオブジェクトをプリミティブ型から生成できるか?",
 			args: args{
-				passID:    "p-123",
-				accountID: "a-456",
+				passID:    "018f2f4e-8c1d-7c44-b2bb-5d1c1a1f2e01",
+				accountID: "018f2f4e-8c1d-7b33-a1aa-4c0b0f0e1d01",
 				password:  "$2a$10$UTmmO8T1nfe0vP28Hbl0.uUM/b00yVAY9Ck9QGv3ETqp1PAOtjhPO",
 				iat:       "2023-05-27T22:21:00+09:00",
 			},
 			want: want{
-				passID:    "p-123",
-				accountID: "a-456",
+				passID:    "018f2f4e-8c1d-7c44-b2bb-5d1c1a1f2e01",
+				accountID: "018f2f4e-8c1d-7b33-a1aa-4c0b0f0e1d01",
 				password:  "$2a$10$UTmmO8T1nfe0vP28Hbl0.uUM/b00yVAY9Ck9QGv3ETqp1PAOtjhPO",
 				iat:       "2023-05-27T22:21:00+09:00",
 			},
@@ -56,11 +59,16 @@ func TestReNewPass(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
+			iat, err := time.Parse(time.RFC3339, tt.args.iat)
+			if err != nil {
+				t.Fatalf("failed to parse iat: %v", err)
+			}
+
 			got, err := domain.ReNewPass(
 				tt.args.passID,
 				tt.args.accountID,
 				tt.args.password,
-				tt.args.iat,
+				iat,
 			)
 
 			if (err != nil) != tt.err.hasErr {
@@ -84,10 +92,10 @@ func TestReNewPass(t *testing.T) {
 			a, _ := domain.ReNewPassID(tt.want.passID)
 			b, _ := domain.ReNewAccountID(tt.want.accountID)
 			c, _ := domain.ReNewPassword(tt.want.password)
-			d, _ := domain.ReNewDate(tt.want.iat)
+			d, _ := domain.ReNewDate(iat)
 
-			if got.PassID() != a {
-				t.Errorf("実際の値は %v, 想定した値は %v", got.PassID(), a)
+			if got.ID() != a {
+				t.Errorf("実際の値は %v, 想定した値は %v", got.ID(), a)
 			}
 			if got.AccountID() != b {
 				t.Errorf("実際の値は %v, 想定した値は %v", got.AccountID(), b)

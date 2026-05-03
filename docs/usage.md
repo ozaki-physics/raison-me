@@ -1,5 +1,7 @@
 # 使い方 Usage
 ## Remote - Containers
+[2025-11-16 時点の 環境起動方法](../db/docs/memo.md)
+
 VS Code の拡張機能 Remote - Containers(識別子: ms-vscode-remote.remote-containers) を使って開発する  
 コンテナ内で VS Code を起動し go 言語のための VS Code の拡張機能 Go(識別子: golang.go) を使う  
 [golang.go](https://marketplace.visualstudio.com/items?itemName=golang.Go)  
@@ -34,6 +36,18 @@ $ docker container run --rm -d -p 8080:8080 --name go_raison_me go1.16:raison_me
 $ docker container stop go_raison_me
 ```
 
+## Cloud Run の Docker image を確認する
+```bash
+$ docker image build -t raison_me_backend:GCR_local_check -f backend/Dockerfile ./backend
+
+$ docker container run -d --name backend_GCR_local_check -p 5011:8081 raison_me_backend:GCR_local_check
+$ docker container exec -it backend_GCR_local_check bash
+# または
+$ docker container run --rm -it --name backend_GCR_local_check -p 5011:8081 --entrypoint /bin/bash raison_me_backend:GCR_local_check
+# なぜかコンテナが すぐ止まるときのログ確認
+$ docker logs backend_GCR_local_check
+```
+ちゃんと ビルドステージ の image の secret フォルダ内に クレデンシャル が無いことを確認した
 ### 外部モジュールのバージョンアップ
 例として github.com/gin-gonic/gin をバージョンアップする  
 1. コンテナにアタッチする
@@ -157,3 +171,10 @@ $ gcloud app deploy
 `go get: added cloud.google.com/go/secretmanager v1.3.0`  
 `$ go get google.golang.org/genproto/googleapis/cloud/secretmanager/v1`  
 `$ go mod tidy`  
+
+## Cloud Run に Secret Manager の情報を ファイルでマウントする
+ドキュメント: <a href="https://docs.cloud.google.com/run/docs/configuring/services/secrets?hl=ja#yaml" target="_blank" rel="noopener noreferrer">サービスのシークレットを構成する</a>  
+ファイルマウントにする  
+Secret Manager に登録しないといけない値は 以下で確認する  
+名前: `backend\cloud-run-service.template.yaml` に書かれている secretName  
+値: `backend\share\secrets\00_comment.dev` に書かれてる値  

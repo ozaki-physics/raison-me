@@ -12,7 +12,10 @@ import (
 	"google.golang.org/api/iterator"
 )
 
-func Main() {
+// BigQuery へ 接続 して クエリを 実行 する
+// 環境変数 GOOGLE_APPLICATION_CREDENTIALS で JSON キー ファイル を 指定 して使う
+// 自作 メソッド を 呼び出す 側
+func getRecord() string {
 	globalConfig := globalConfig.NewConfig()
 
 	ctx := context.Background()
@@ -27,12 +30,15 @@ func Main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	if err := printResults(os.Stdout, rows); err != nil {
+	results, err := printResults(os.Stdout, rows)
+	if err != nil {
 		log.Fatal(err)
 	}
+
+	return results
 }
 
-// 取得 SQL
+// 取得 SQL 文
 func query(ctx context.Context, client *bigquery.Client) (*bigquery.RowIterator, error) {
 
 	query := client.Query(
@@ -60,17 +66,19 @@ type BabyNamesRow struct {
 }
 
 // 取得 した レコード の出力
-func printResults(w io.Writer, iter *bigquery.RowIterator) error {
+func printResults(w io.Writer, iter *bigquery.RowIterator) (string, error) {
+	results := []BabyNamesRow{}
 	for {
 		var row BabyNamesRow
 		err := iter.Next(&row)
 		if err == iterator.Done {
-			return nil
+			return fmt.Sprintf("%v", results), nil
 		}
 		if err != nil {
-			return fmt.Errorf("error iterating through results: %v", err)
+			return "", fmt.Errorf("error iterating through results: %v", err)
 		}
 
 		fmt.Fprintf(w, "name: %s, count: %d\n", row.Name, row.Count)
+		results = append(results, row)
 	}
 }

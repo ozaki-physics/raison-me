@@ -1,108 +1,172 @@
 package config
 
-import "os"
+import (
+	"encoding/json"
+	"fmt"
+	"log"
+	"net/url"
+	"os"
+	"path/filepath"
+	"strings"
+)
 
 type Config interface {
 	IsLive() bool
 	IsCloud() bool
 	GetGCPProjectID() string
+	GetDSN() string
+	GetSupabaseDSN() string
+	GetPort() string
+	// TODO: 暫定の認証
+	GetSampleAPIToken() string
+	GetAuthNPepper() string
+	GetAuthNJWTSecret() string
+	GetAuthNRefreshTokenPepper() string
 }
 
-const (
-	ProductionCloud = iota
-	ProductionLocal
-	DevelopmentCloud
-	DevelopmentLocal
-)
-
-const runMode = DevelopmentCloud
-
 func NewConfig() Config {
-	switch runMode {
-	case ProductionCloud:
-		return newProductionCloudConfig()
-	case ProductionLocal:
-		return newProductionLocalConfig()
-	case DevelopmentCloud:
-		return newDevelopmentCloudConfig()
-	case DevelopmentLocal:
-		return newDevelopmentLocalConfig()
-	default:
-		return newDevelopmentLocalConfig()
+	log.Println("Config: called")
+	isCloud := os.Getenv("IS_CLOUD") == "true"
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "8081"
 	}
+
+	isLive := readFile[string](isCloud, "IS_LIVE") == "true"
+	gcpProjectID := readFile[string](isCloud, "GCP_PROJECT_ID")
+
+	dataSourceName := readFile[string](isCloud, "DATABASE_URL")
+	supabaseConfig := readFile[supabaseConfig](isCloud, "DATABASE_SUPABASE_JSON")
+
+	// TODO: 暫定の認証
+	sampleAPIToken := readFile[string](isCloud, "SAMPLE_API_TOKEN")
+
+	authNPepper := readFile[string](isCloud, "AUTHN_PASSWORD_PEPPER")
+	authNJWTSecret := readFile[string](isCloud, "AUTHN_JWT_HS256_SECRET")
+	authNRefreshTokenPepper := readFile[string](isCloud, "AUTHN_REFRESH_TOKEN_PEPPER")
+
+	c := config{
+		isLive:                  isLive,
+		isCloud:                 isCloud,
+		gcpProjectID:            gcpProjectID,
+		dataSourceName:          dataSourceName,
+		supabaseConfig:          supabaseConfig,
+		port:                    port,
+		sampleAPIToken:          sampleAPIToken,
+		authNPepper:             authNPepper,
+		authNJWTSecret:          authNJWTSecret,
+		authNRefreshTokenPepper: authNRefreshTokenPepper,
+	}
+	return &c
 }
 
 type config struct {
-	runMode      int
-	isLive       bool
-	isCloud      bool
-	gcpProjectID string
+	isLive                  bool
+	isCloud                 bool
+	gcpProjectID            string
+	dataSourceName          string
+	supabaseConfig          supabaseConfig
+	port                    string
+	sampleAPIToken          string
+	authNPepper             string
+	authNJWTSecret          string
+	authNRefreshTokenPepper string
 }
 
 func (c *config) IsLive() bool {
-	// TODO: 無理やり環境変数から取得している
-	if os.Getenv("IS_LIVE") == "true" {
-		return true
-	}
 	return c.isLive
 }
 
 func (c *config) IsCloud() bool {
-	// TODO: 無理やり環境変数から取得している
-	if os.Getenv("IS_CLOUD") == "true" {
-		return true
-	}
 	return c.isCloud
 }
 
 func (c *config) GetGCPProjectID() string {
-	tmp := os.Getenv("GCP_PROJECT_ID")
-	if tmp != "" {
-		return tmp
-	}
 	return c.gcpProjectID
 }
 
-// 本番(実データ, クラウド)
-func newProductionCloudConfig() *config {
-	c := &config{
-		runMode:      ProductionCloud,
-		isLive:       true,
-		isCloud:      true,
-		gcpProjectID: "raison-me",
-	}
-	return c
+func (c *config) GetDSN() string {
+	return c.dataSourceName
 }
 
-// 本番(実データ, ローカル)
-func newProductionLocalConfig() *config {
-	c := &config{
-		runMode:      ProductionLocal,
-		isLive:       true,
-		isCloud:      false,
-		gcpProjectID: "",
-	}
-	return c
+func (c *config) GetSupabaseDSN() string {
+	config := c.supabaseConfig
+	escapedPass := url.QueryEscape(config.Password)
+	dsn := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=require", config.User, escapedPass, config.Host, config.TransactionPort, config.Dbname)
+	return dsn
 }
 
-// 開発(テストデータ, クラウド)
-func newDevelopmentCloudConfig() *config {
-	c := &config{
-		runMode:      DevelopmentCloud,
-		isLive:       false,
-		isCloud:      true,
-		gcpProjectID: "smart-ruler-277318",
-	}
-	return c
+func (c *config) GetPort() string {
+	return c.port
 }
 
-// 開発(テストデータ, ローカル)
-func newDevelopmentLocalConfig() *config {
-	c := &config{
-		runMode:      DevelopmentLocal,
-		isLive:       false,
-		isCloud:      false,
-		gcpProjectID: "",
+func (c *config) GetSampleAPIToken() string {
+	return c.sampleAPIToken
+}
+
+func (c *config) GetAuthNPepper() string {
+	return c.authNPepper
+}
+
+func (c *config) GetAuthNJWTSecret() string {
+	return c.authNJWTSecret
+}
+
+func (c *config) GetAuthNRefreshTokenPepper() string {
+	return c.authNRefreshTokenPepper
+}
+
+type supabaseConfig struct {
+	User            string `json:"user"`
+	Password        string `json:"password"`
+	Host            string `json:"host"`
+	TransactionPort int    `json:"transaction_port"`
+	Dbname          string `json:"dbname"`
+}
+
+// 機密情報 JSON ファイル を 読み取る ヘルパー 関数
+// (ジェネリクス 使用のため レシーバー にできない)
+func readFile[T any](isCloud bool, fileName string) T {
+	// ファイル パス の 組み立て
+	var filePath string
+	if isCloud {
+		// なぜ fileName を 2回 繰り返すか
+		// Cloud Run では Secret Manager は 1つの シークレット に 1つの ボリューム を 対応 させる 必要がある
+		// また ボリューム を 1個のディレクトリに まとめられない
+		// よって シークレット名 ごとに ディレクトリ が 作成 されるため
+
+		// /app は Cloud Run 用 の Dockerfile で 作成 した ディレクトリ
+		filePath = filepath.Join("/app/share/secrets/", fileName, fileName)
+	} else {
+		// secret file が 格納されてる ディレクトリ の パスを取得
+		filePath = filepath.Join("./share/secrets/", fileName)
 	}
-	return c
+
+	var zero T
+	if _, ok := any(zero).(string); ok {
+		b, err := os.ReadFile(filePath)
+		if err != nil {
+			// TODO: エラーハンドリング が 雑
+			log.Printf("Failed to read file: %v", err)
+			return zero
+		}
+
+		s := strings.TrimSpace(string(b))
+		return any(s).(T)
+	}
+
+	b, err := os.ReadFile(filePath)
+	if err != nil {
+		// TODO: エラーハンドリング が 雑
+		log.Fatalf("Failed to read file(JSON): %v", err)
+	}
+
+	var result T
+	err = json.Unmarshal(b, &result)
+	if err != nil {
+		// TODO: エラーハンドリング が 雑
+		log.Fatalf("Failed to parse JSON file: %v", err)
+	}
+
+	return result
 }

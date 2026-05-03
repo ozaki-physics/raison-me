@@ -1,0 +1,312 @@
+# DB コンテナ の扱い
+## 方針
+スキーマ は 全部 public に作ってもいいが 意図的に 分けて運用する
+なんとなく public にしておくと 柔軟性が無くなりそう
+将来的に スキーマ ごとに ユーザー を分けるとか できそう
+
+RLS は いったん 気にしない
+
+## 開発環境の起動方法
+VS Code の Dev Containers を使う
+
+または
+`pwd` raison-me
+`docker compose -f .\.devcontainer\compose.yaml up -d`
+
+どちらかで 起動したら もう片方の方法で起動することは できないっぽい
+
+## マイグレーション について
+### マイグレーションの実行
+以下を実行する
+
+コンテナに接続
+`docker exec -it local_db bash`
+VS Code の Dev Containers で 起動していると compose コマンドでは アタッチできない
+よって 標準の Docker コマンドを使う
+
+- コンテナ内で マイグレーションファイルを実行できるようにする
+`chmod +x /raison-me/db_scripts/*.sh`
+
+- マイグレーションの実行
+`./raison-me/db_scripts/migrate_local.sh`
+DB の変更 を すべて適用する
+`/migrations` ディレクトリの中にある sql ファイルが対象
+
+- 本番環境で流す1個の SQL を作成
+`./raison-me/db_scripts/bundle.sh`
+マイグレーションの複数ファイルを1個にまとめる
+`/raison-me/db_release/bundle_2025-10-19_061010.sql` のようなファイルが作られる
+
+### マイグレーション ファイル を作るとき
+各ファイルは 以下の流れで作る
+```sql
+BEGIN;
+
+-- 以降の SQL を app, public スキーマ の 順で使う
+SET search_path TO app, public;
+
+-- 実際に動かしたい SQL
+-- CREATE TABLE IF NOT EXISTS テーブル名...
+-- INSERT INTO ...
+
+COMMIT;
+```
+
+### 接続文字列
+環境変数に設定した DATABASE_URL は PostgreSQL に接続するための 1行で完結する接続文字列
+`postgres://<ユーザー名>:<パスワード>@<ホスト>:<ポート>/<データベース名>`
+別名: connection URL, Data Source Name(略: DSN) ともいう
+厳密には URI が正しいが 慣例的に URL という
+
+## DB コンテナ を 扱うときの Docker コマンド
+- image の ビルド
+`docker compose -f .\.devcontainer\compose.yaml buil`
+
+- image から コンテナ をデーモンで作成
+`docker compose -f .\.devcontainer\compose.yaml up -d`
+
+- コンテナの接続
+`docker compose -f .\.devcontainer\compose.yaml exec local_db bash`
+
+- コンテナの削除(ボリューム含む)
+基本 使わない
+`-v` で DB のデータが入ってるボリュームごと消す
+`docker compose -f .\.devcontainer\compose.yaml down -v`
+
+- ボリュームの確認
+`docker volume ls`
+
+- 特定ボリュームの詳細を調べる
+`docker volume inspect <ボリューム名>`
+
+- 特定ボリュームを削除
+`docker volume rm <ボリューム名>`
+
+### compose の env_file と environment の違い
+env_file は コンテナ起動時に適用されて compose ファイル内の ${VAR} 補完には使われない
+
+案
+01. --env-file で compose ファイル内の ${VAR} に適用する 変数を読み込む
+02. compose.yaml と 同じ場所に .env を置いて 自動で ${VAR} に適用させる
+03. compose.yaml に environment を書かず すべて env_file にする
+
+__結論: 案02 を 基準として 柔軟性が必要になれば --env-file で 上書きする運用にする__
+よって 通常と同じ様に compose コマンドを使えばよい
+#### 他の案を検討した記録
+- 案01
+compose コマンドを使う = compose.yaml を参照する 操作 のとき `${VAR}` が展開されないと 変数が空という注意メッセージが出る
+起動のときは 確実に `${VAR}` が展開されるように起動しないと 今回作ったコンテナの設計としてはエラーになる
+`docker compose -f .\.devcontainer\compose.yaml --env-file ./db/.env up -d`
+他に 接続するとき, 停止削除 するときも compose コマンドを使うので 注意メッセージが出る可能性はある
+しかし コンテナ起動するときに 環境変数 に入れていたら 正常に動作する
+`docker compose -f .\.devcontainer\compose.yaml exec local_db bash`
+-> 注意メッセージが出るが 動く
+`docker compose -f .\.devcontainer\compose.yaml --env-file ./db/.env exec local_db bash`
+-> 注意メッセージは 出ない
+`docker compose -f .\.devcontainer\compose.yaml down`
+-> 注意メッセージが出るが 動く
+
+- 案03
+```yaml
+    # コンテナ 起動時に適用される 環境変数 を .env ファイルから読み込む
+    # コンテナに渡す環境 であり compose ファイル内の ${VAR} 補完には使われない
+    env_file:
+      - ../db/.env
+    # compose.yaml が 実行するときに 内で 定義した環境変数 を使う
+    # ただし env_file で 定義した パスにある 値が使われるわけではない
+    # --env-file オプションで 指定した ファイルの値 or compose.yaml と 同じディレクトリにある .env ファイル の値 が 使われる
+    environment:
+      # DB 接続に必要な環境変数
+      POSTGRES_DB: ${POSTGRES_DB}
+```
+
+## DB コンテナ を 扱うときの SQL コマンド
+- psql に接続
+`psql -U ユーザー名 -d 対象 DB 名`
+例: `psql -U dev_user -d raison_me_db`
+
+- 以降の SQL を 任意のスキーマ で実行に変更
+```sql
+-- 以降の SQL を app, public スキーマ の 順で使う
+-- トランザクション や セッション のスコープ
+SET search_path TO app, public;
+```
+
+- テーブル一覧
+`\dt`
+```sql
+SELECT
+  tablename
+FROM pg_catalog.pg_tables
+WHERE
+    schemaname != 'pg_catalog'
+  AND
+    schemaname != 'information_schema'
+;
+```
+```sql
+SELECT
+  n.nspname AS schema_name,
+  c.relname AS table_name,
+  pg_catalog.pg_get_userbyid(c.relowner) AS owner
+FROM pg_catalog.pg_class c
+JOIN pg_catalog.pg_namespace n
+ON n.oid = c.relnamespace
+WHERE
+  -- 'r' = 普通のテーブル
+    c.relkind = 'r'
+  AND
+    n.nspname NOT IN ('pg_catalog', 'information_schema')
+ORDER BY
+  schema_name,
+  table_name
+;
+```
+
+- ターミナルの SQL モードを終了
+`exit`
+`\q`
+
+- OS や ビルド情報 などを 取得
+`SELECT version();`
+
+- schema の 確認
+`\dn`
+`SELECT schema_name FROM information_schema.schemata;`
+
+- テーブル や オブジェクト の 権限を確認
+```sql
+SELECT
+  table_schema,
+  table_name,
+  grantee,
+  privilege_type
+FROM information_schema.table_privileges
+WHERE
+  -- 任意のスキーマ, ここでは app
+  table_schema = 'app'
+;
+```
+
+- 特定のロールの スキーマ権限を確認
+Supabase 専用かも?
+```sql
+SELECT
+  rolname,
+  -- app スキーマ
+  has_schema_privilege(rolname, 'app', 'USAGE') AS has_usage
+FROM pg_roles
+WHERE
+  rolname IN ('anon', 'authenticated', 'service_role')
+;
+```
+
+- スキーマ の作成
+```sql
+-- もし app スキーマ が存在しなかったら作る
+CREATE SCHEMA IF NOT EXISTS app;
+```
+
+- スキーマ に 権限を付与(RLS じゃなくて GRANT)
+Supabase 専用
+特定のロール で 該当スキーマ を見れるようにする(データ操作はできない)
+service_role は Supabase で 強い権限を持つため 扱い注意
+`GRANT USAGE ON SCHEMA app TO service_role;`
+TODO: ちゃんと 権限を 勉強したい
+
+- 既存テーブルへの権限
+Supabase 専用
+該当ロール で 該当テーブル を操作できるようにする
+service_role は Supabase で 強い権限を持つため 扱い注意
+RLS で絞る前提なのでいったんフル権限付与するのが定石 らしい
+`GRANT select, insert, update, delete on all tables IN SCHEMA app TO service_role;`
+TODO: ちゃんと 権限を 勉強したい
+
+- テーブルが なければ作成
+```sql
+CREATE TABLE IF NOT EXISTS users (
+  id INT GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
+  name TEXT NOT NULL
+);
+```
+
+- RLSが有効か?
+```sql
+SELECT
+  n.nspname as schema,
+  c.relname as table,
+  c.relrowsecurity as rls_enabled
+FROM pg_class c
+JOIN pg_namespace n
+ON n.oid = c.relnamespace
+WHERE
+    n.nspname = 'app'
+  AND
+    c.relname = 'users'
+;
+```
+
+- テーブル内にあるカラムの型を調べる
+```sql
+SELECT
+  column_name,
+  data_type,
+  udt_name,
+  is_nullable,
+  column_default
+FROM information_schema.columns
+WHERE table_schema = 'app'
+  AND table_name = 'passwords'
+ORDER BY ordinal_position
+;
+```
+
+## ローカル の PostgreSQL で 最初からやり直したいとき
+1. コンテナごと削除する
+2. テーブルを削除する
+`SET search_path TO app, public;`
+`delete from schema_migrations;`
+`drop table capital_coin_transaction;`
+`drop table capital_coin;`
+`drop table passwords;`
+`drop table accounts;`
+
+## DB コンテナのボリューム と 初回起動 について
+postgres:17 は既定で 次の環境変数のパスに データが格納される
+`PGDATA=/var/lib/postgresql/data`
+公式イメージは `PGDATA` ディレクトリを ボリューム前提で扱うため マウント指定がないと匿名ボリュームが自動作成される
+
+また Docker 公式のデータベースイメージ(mysql, postgres)には 初回起動時にデータベースを初期化する機構がある
+`/docker-entrypoint-initdb.d` ディレクトリに置かれたスクリプトを自動的に実行
+
+公式イメージの挙動
+1. PGDATA が空のときだけ 初期化(initdb)
+2. /docker-entrypoint-initdb.d の *.sql, *.sql.gz, *.sh, *.sh.gz を辞書順で実行
+
+## Supabase について
+Supabase には PostgREST レイヤー(pgAPI)がある
+pgAPI は デフォルトで public / graphql_public 以外のスキーマが公開されていない
+そのため 任意の スキーマ を作っても 設定を変更しないと 外部から見れない
+
+疑問: スキーマ を 分けるのは RLS の思想と競合しているのか?
+
+以下を行うと API で データが見れるようになった
+RLS が 無効でも 見れる
+- スキーマ に 権限を付与(RLS じゃなくて GRANT)
+- 既存テーブルへの権限
+
+### 外部から データを見るために 触った設定
+Supabase の ダッシュボード > Project Settings > Data API で
+Exposed schemas に app を追加する
+Extra search path に app を追加する
+まだ API からは アクセスできなかった笑
+
+Supabase の ダッシュボード > Authenticaton > policies で
+Schema を app にして RLS を 有効にする
+まだ API からは アクセスできなかった笑
+
+## RLS について
+RLS(Row-Level Security) のこと
+RLS は テーブルへのアクセス権 などの チェック後に評価される
+テーブルへのアクセス権 が USAGE など
+よって RLS で権限を絞るとしても GRANT 自体は必要

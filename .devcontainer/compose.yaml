@@ -8,10 +8,11 @@ services:
       dockerfile: ./.devcontainer/Dockerfile
     image: raison_me:local_dev
     container_name: local_dev
-    environment:
-      # BigQuery にローカルから接続するために サービスアカウント の key を使う
-      # これで BigQuery の SDK で 自動でこの認証を使ってくれる
-      - GOOGLE_APPLICATION_CREDENTIALS=/app/backend/trybigquery/smart-ruler-277318-e68077580ad1_key.json
+    env_file:
+      # バックエンド で 使う 環境変数
+      - ../backend/share/secrets/.env.dev
+      # フロントエンド で 使う 環境変数
+      - ../frontend/raison-me-fe/.env.dev
     tty: true
     command: bash
     ports:
@@ -25,9 +26,51 @@ services:
       # node_module のファイル数が とても多いため かつ OS 依存のコードが含まれる可能性があるため
       - raison-me-fe-node_modules:/app/frontend/raison-me-fe/node_modules
 
+  local_db:
+    build:
+      context: ..
+      dockerfile: ./db/Dockerfile
+    image: raison_me:local_db
+    container_name: local_db
+    # compose.yaml が 実行するときに 内で 定義した環境変数 を使う
+    # ただし env_file で 定義した パスにある 値が使われるわけではない
+    # --env-file オプションで 指定した ファイルの値 or compose.yaml と 同じディレクトリにある .env ファイル の値 が 使われる
+    environment:
+      # DB 接続に必要な環境変数
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # マイグレーションスクリプトの実行で使う 環境変数 を追加
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@local_db:5432/${POSTGRES_DB}
+      # マイグレーション SQL が保存されているディレクトリを指定
+      # マウントで使用するパスと合わせる
+      MIGRATION_SQL_DIR: /raison-me/db_migrations
+      MIGRATION_OUTPUT_DIR: /raison-me/db_release
+    ports:
+      - "5432:5432"
+    volumes:
+      # postgres の 公式イメージが デフォルトで PGDATA=/var/lib/postgresql/data を ボリューム前提で扱う
+      # compose up するたびに 新しい匿名ボリュームが作られるのを防ぐため named volume を使う
+      - raison-me-db-data:/var/lib/postgresql/data
+      # マイグレーションスクリプトを コンテナ内で実行するために 共有
+      - ../db/migrations/:/raison-me/db_migrations/:rw
+      - ../db/scripts/:/raison-me/db_scripts/:rw
+      - ../db/release/:/raison-me/db_release/:rw
+    # PostgreSQL コンテナのヘルスチェック
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dev_user -d raison_me_db"]
+      interval: 5m
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+
 volumes:
   # このボリュームは node_modules を同期しないためのもの
   # ボリュームの定義 を compose.yaml 内でしないと compose up するごとに ボリュームが作られてた?
   raison-me-fe-node_modules:
     name: raison-me-fe-node_modules
+    driver: local
+  # PostgreSQL のデータ永続化用ボリューム
+  raison-me-db-data:
+    name: raison-me-db-data
     driver: local

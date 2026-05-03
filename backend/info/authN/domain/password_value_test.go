@@ -28,17 +28,15 @@ func TestNewPassword(t *testing.T) {
 	}{
 		// テストケース
 		{
-			name: "文字列を渡して生成できるか?",
+			name: "ハッシュ文字列を渡して生成できるか?",
 			args: args{
-				data: "Password123!",
+				data: "$2a$10$UTmmO8T1nfe0vP28Hbl0.uUM/b00yVAY9Ck9QGv3ETqp1PAOtjhPO",
 			},
 			want: want{
-				// $2a$10$UTmmO8T1nfe0vP28Hbl0.uUM/b00yVAY9Ck9QGv3ETqp1PAOtjhPO など
-				first: "",
+				first: "$2a$10$UTmmO8T1nfe0vP28Hbl0.uUM/b00yVAY9Ck9QGv3ETqp1PAOtjhPO",
 			},
 			err: err{
 				hasErr: false,
-				msg:    "",
 			},
 		},
 		{
@@ -55,32 +53,18 @@ func TestNewPassword(t *testing.T) {
 			},
 		},
 		{
-			name: "72バイト以上でエラーになるか?",
+			name: "bcrypt 形式ではない文字列でエラーになるか?",
 			args: args{
-				data: "あいうえおあいうえおあいうえおあいうえおあいうえ",
+				data: "NotHashText",
 			},
 			want: want{
 				first: "",
 			},
 			err: err{
 				hasErr: true,
-				msg:    "パスワードを短くしてください",
+				msg:    "パスワードハッシュが不正です",
 			},
 		},
-		// {
-		// 	// bcrypt.DefaultCost を 31以上にしたら発生したりする
-		// 	name: "ハッシュ化できないエラーになるか?",
-		// 	args: args{
-		// 		data: "あいうえおあいうえおあいうえおあいうえおあいう",
-		// 	},
-		// 	want: want{
-		// 		first: "",
-		// 	},
-		// 	err: err{
-		// 		hasErr: true,
-		// 		msg:    "",
-		// 	},
-		// },
 	}
 
 	for _, tt := range tests {
@@ -88,7 +72,7 @@ func TestNewPassword(t *testing.T) {
 			got, err := domain.NewPassword(tt.args.data)
 
 			if (err != nil) != tt.err.hasErr {
-				t.Errorf("実際の error = %v, hasErr %v", err, tt.err.hasErr)
+				t.Errorf("error の有無が想定と異なります, 実際のエラー: %v, 想定されるエラーの有無: %v", err, tt.err.hasErr)
 				return
 			}
 
@@ -104,10 +88,12 @@ func TestNewPassword(t *testing.T) {
 				return
 			}
 
-			// if got.ToHash() != tt.want.first {}
-			// t.Errorf(got.ToHash())
-			if got.ToHash() == "" {
-				t.Errorf("実際の値は %v, 想定した値は %v", got.ToHash(), tt.want)
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
+			}
+
+			if got.HashedText() != tt.want.first {
+				t.Errorf("実際の値は %v, 想定した値は %v", got.HashedText(), tt.want.first)
 			}
 		})
 	}
@@ -134,7 +120,7 @@ func TestReNewPassword(t *testing.T) {
 	}{
 		// テストケースたち
 		{
-			name: "ハッシュ化された文字列を渡して生成できるか?",
+			name: "ハッシュ文字列を渡して生成できるか?",
 			args: args{
 				data: "$2a$10$UTmmO8T1nfe0vP28Hbl0.uUM/b00yVAY9Ck9QGv3ETqp1PAOtjhPO",
 			},
@@ -153,24 +139,16 @@ func TestReNewPassword(t *testing.T) {
 			got, err := domain.ReNewPassword(tt.args.data)
 
 			if (err != nil) != tt.err.hasErr {
-				t.Errorf("実際の error = %v, hasErr %v", err, tt.err.hasErr)
+				t.Errorf("error の有無が想定と異なります, 実際のエラー: %v, 想定されるエラーの有無: %v", err, tt.err.hasErr)
 				return
 			}
 
-			if (err != nil) && tt.err.hasErr {
-				var de = domain.NewDomainError("")
-				if errors.As(err, &de) {
-					if err.Error() != tt.err.msg {
-						t.Errorf("実際のエラーは %v, 想定されるエラーは %v", err.Error(), tt.err.msg)
-					}
-				} else {
-					t.Errorf("実際の error = %v, hasErr %v", err, tt.err.hasErr)
-				}
-				return
+			if err != nil {
+				t.Fatalf("unexpected error: %v", err)
 			}
 
-			if got.ToHash() != tt.want.first {
-				t.Errorf("実際の値は %v, 想定した値は %v", got.ToHash(), tt.want)
+			if got.HashedText() != tt.want.first {
+				t.Errorf("実際の値は %v, 想定した値は %v", got.HashedText(), tt.want.first)
 			}
 		})
 	}
