@@ -10,10 +10,10 @@ import (
 	"github.com/ozaki-physics/raison-me/delight"
 	"github.com/ozaki-physics/raison-me/growth"
 	"github.com/ozaki-physics/raison-me/info"
-	"github.com/ozaki-physics/raison-me/middleware_temp"
 	"github.com/ozaki-physics/raison-me/regung"
 	"github.com/ozaki-physics/raison-me/seed"
 	"github.com/ozaki-physics/raison-me/share/config"
+	sharemiddleware "github.com/ozaki-physics/raison-me/share/middleware"
 	"github.com/ozaki-physics/raison-me/zeit"
 )
 
@@ -33,8 +33,13 @@ func Run() {
 
 	r := chi.NewRouter()
 	r.Use(middleware.Logger)
-	// TODO: 暫定の認証ミドルウェア
-	r.Use(middleware_temp.SampleMiddleware(app.GetConfig()))
+	// 暫定の認証ミドルウェア
+	r.Use(sharemiddleware.CustomMiddleware(app.GetConfig()))
+
+	// ヘルスチェック用のエンドポイント
+	r.Get("/healthz", func(w http.ResponseWriter, r *http.Request) {
+		w.Write([]byte("OK"))
+	})
 
 	// 静的ファイル の 配信
 	r.Mount("/", staticFileRouter())
