@@ -4,6 +4,7 @@ import (
 	"context"
 	"log"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/ozaki-physics/raison-me/info/authN/domain"
@@ -60,8 +61,10 @@ func (urs *userRepoSQL) Fetch(ctx context.Context) ([]domain.User, error) {
 	}
 	defer rows.Close()
 
+	found := false
 	var users []domain.User
 	for rows.Next() {
+		found = true
 		var aID, uID, uName string
 		if err := rows.Scan(&aID, &uID, &uName); err != nil {
 			log.Printf("scan: %v\n", err)
@@ -73,6 +76,10 @@ func (urs *userRepoSQL) Fetch(ctx context.Context) ([]domain.User, error) {
 			return nil, err
 		}
 		users = append(users, *user)
+	}
+
+	if !found {
+		return nil, domain.NewDomainError("ユーザーが見つかりません")
 	}
 
 	// 途中で ストリーム が エラー になることがある
@@ -98,20 +105,7 @@ func (urs *userRepoSQL) FindByAccountId(ctx context.Context, accountID domain.Ac
 	`
 
 	row := urs.pool.QueryRow(ctx, sql_statement, accountID.Val())
-
-	var aID, uID, uName string
-	if err := row.Scan(&aID, &uID, &uName); err != nil {
-		log.Printf("scan: %v\n", err)
-		return nil, err
-	}
-
-	user, err := domain.ReNewUser(aID, uID, uName)
-	if err != nil {
-		log.Printf("renew user: %v\n", err)
-		return nil, err
-	}
-
-	return user, nil
+	return scanUser(row)
 }
 
 func (urs *userRepoSQL) FindById(ctx context.Context, id domain.UserID) (*domain.User, error) {
@@ -126,14 +120,23 @@ func (urs *userRepoSQL) FindById(ctx context.Context, id domain.UserID) (*domain
 	`
 
 	row := urs.pool.QueryRow(ctx, sql_statement, id.Val())
+	return scanUser(row)
+}
 
-	var aID, uID, uName string
-	if err := row.Scan(&aID, &uID, &uName); err != nil {
+// pgx.Row から domain.User を構築するヘルパー関数
+func scanUser(row pgx.Row) (*domain.User, error) {
+	var accountID, userID, userName string
+
+	err := row.Scan(&accountID, &userID, &userName)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, domain.NewDomainError("ユーザーが見つかりません")
+		}
 		log.Printf("scan: %v\n", err)
 		return nil, err
 	}
 
-	user, err := domain.ReNewUser(aID, uID, uName)
+	user, err := domain.ReNewUser(accountID, userID, userName)
 	if err != nil {
 		log.Printf("ReNewUser: %v\n", err)
 		return nil, err

@@ -5,6 +5,7 @@ import (
 	"log"
 	"time"
 
+	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
 	_ "github.com/jackc/pgx/v5/stdlib"
 	"github.com/ozaki-physics/raison-me/info/authN/domain"
@@ -37,7 +38,7 @@ func (prs *passRepoSQL) Insert(ctx context.Context, pass domain.Pass) (*domain.P
 	password := pass.Password()
 	iat := pass.IssuedAt()
 
-	_, err := prs.pool.Exec(ctx, sql_statement, pID.Val(), aID.Val(), password.HashedText(), iat.MyFormat())
+	_, err := prs.pool.Exec(ctx, sql_statement, pID.Val(), aID.Val(), password.HashedText(), iat.Time)
 	if err != nil {
 		log.Printf("exec: %v\n", err)
 		return nil, err
@@ -59,10 +60,19 @@ func (prs *passRepoSQL) FindByAccountId(ctx context.Context, accountID domain.Ac
 	`
 
 	row := prs.pool.QueryRow(ctx, sql_statement, accountID.Val())
+	return scanPass(row)
+}
 
+// pgx.Row から domain.Pass を構築するヘルパー関数
+func scanPass(row pgx.Row) (*domain.Pass, error) {
 	var passwordID, accountIDStr, passwordStr string
 	var iat time.Time
-	if err := row.Scan(&passwordID, &accountIDStr, &passwordStr, &iat); err != nil {
+
+	err := row.Scan(&passwordID, &accountIDStr, &passwordStr, &iat)
+	if err != nil {
+		if err == pgx.ErrNoRows {
+			return nil, domain.NewDomainError("パスワードが見つかりません")
+		}
 		log.Printf("scan: %v\n", err)
 		return nil, err
 	}
