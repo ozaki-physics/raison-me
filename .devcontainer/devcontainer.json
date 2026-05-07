@@ -33,5 +33,5 @@
     }
   },
   // VS Code の go の拡張機能(golang.go)を使うときに 毎回表示されるのが面倒だから先にインストールしておく
-  "postCreateCommand": "go install -v golang.org/x/tools/gopls@latest"
+  "postCreateCommand": "go install -v golang.org/x/tools/gopls@latest && go install -v github.com/go-delve/delve/cmd/dlv@latest"
 }

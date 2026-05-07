@@ -1,6 +1,10 @@
 package infra
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/ozaki-physics/raison-me/share/errorer"
+)
 
 // インフラ層の 独自エラー
 type InfraError interface {
@@ -36,16 +40,23 @@ func WrapInfraError(msg string, innerErr error) InfraError {
 }
 
 // 標準エラーのインタフェースを満たすため
-func (ie *infraError) Error() string {
-	return ie.msg
+func (e *infraError) Error() string {
+	return e.msg
 }
 
 // ラップ元のエラーまで出力する
-func (ie *infraError) FullError() string {
-	return fmt.Sprintf("%s: %v", ie.msg, ie.err)
+func (e *infraError) FullError() string {
+	// 再帰的に FullError を 呼び出すことで ラップ元のエラーも 全て 出力する
+	if e.err != nil {
+		if fullErr, ok := e.err.(errorer.FullErrorer); ok {
+			return fmt.Sprintf("%s: %s", e.msg, fullErr.FullError())
+		}
+		return fmt.Sprintf("%s: %v", e.msg, e.err)
+	}
+	return e.msg
 }
 
 // Unwrap したときに ラップ元の型を取り出せるようにするため
-func (ie *infraError) Unwrap() error {
-	return ie.err
+func (e *infraError) Unwrap() error {
+	return e.err
 }
