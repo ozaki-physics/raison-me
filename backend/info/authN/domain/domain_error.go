@@ -1,6 +1,10 @@
 package domain
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/ozaki-physics/raison-me/share"
+)
 
 // ドメイン層の 独自エラー
 type DomainError interface {
@@ -36,16 +40,23 @@ func WrapDomainError(msg string, innerErr error) DomainError {
 }
 
 // 標準エラーのインタフェースを満たすため
-func (de *domainError) Error() string {
-	return de.msg
+func (e *domainError) Error() string {
+	return e.msg
 }
 
 // ラップ元のエラーまで出力する
-func (de *domainError) FullError() string {
-	return fmt.Sprintf("%s: %v", de.msg, de.err)
+func (e *domainError) FullError() string {
+	// 再帰的に FullError を 呼び出すことで ラップ元のエラーも 全て 出力する
+	if e.err != nil {
+		if fullErr, ok := e.err.(share.FullErrorer); ok {
+			return fmt.Sprintf("%s: %s", e.msg, fullErr.FullError())
+		}
+		return fmt.Sprintf("%s: %v", e.msg, e.err)
+	}
+	return e.msg
 }
 
 // Unwrap したときに ラップ元の型を取り出せるようにするため
-func (de *domainError) Unwrap() error {
-	return de.err
+func (e *domainError) Unwrap() error {
+	return e.err
 }

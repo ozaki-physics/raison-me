@@ -1,6 +1,10 @@
 package usecase
 
-import "fmt"
+import (
+	"fmt"
+
+	"github.com/ozaki-physics/raison-me/share"
+)
 
 // ユースケース層の 独自エラー
 type UsecaseError interface {
@@ -36,16 +40,23 @@ func WrapUsecaseError(msg string, innerErr error) UsecaseError {
 }
 
 // 標準エラーのインタフェースを満たすため
-func (de *usecaseError) Error() string {
-	return de.msg
+func (e *usecaseError) Error() string {
+	return e.msg
 }
 
 // ラップ元のエラーまで出力する
-func (de *usecaseError) FullError() string {
-	return fmt.Sprintf("%s: %v", de.msg, de.err)
+func (e *usecaseError) FullError() string {
+	// 再帰的に FullError を 呼び出すことで ラップ元のエラーも 全て 出力する
+	if e.err != nil {
+		if fullErr, ok := e.err.(share.FullErrorer); ok {
+			return fmt.Sprintf("%s: %s", e.msg, fullErr.FullError())
+		}
+		return fmt.Sprintf("%s: %v", e.msg, e.err)
+	}
+	return e.msg
 }
 
 // Unwrap したときに ラップ元の型を取り出せるようにするため
-func (de *usecaseError) Unwrap() error {
-	return de.err
+func (e *usecaseError) Unwrap() error {
+	return e.err
 }
