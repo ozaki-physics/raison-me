@@ -4,6 +4,8 @@ import (
 	"encoding/json"
 	"log"
 	"net/http"
+
+	"github.com/ozaki-physics/raison-me/share/errorer"
 )
 
 type Handler interface {
@@ -41,11 +43,6 @@ type StatusCoder interface {
 	StatusCode() int
 }
 
-// FullErrorer を 実装している エラー なら FullError を 返すため
-type FullErrorer interface {
-	FullError() string
-}
-
 // 内部 err を クライアント に 返す形に整える
 func newErrorResponse(w http.ResponseWriter, e error) http.ResponseWriter {
 	var s int
@@ -57,7 +54,7 @@ func newErrorResponse(w http.ResponseWriter, e error) http.ResponseWriter {
 	}
 
 	// e が FullErrorer を 実装しているなら FullError を ログに出力する
-	if fullErr, ok := e.(FullErrorer); ok {
+	if fullErr, ok := e.(errorer.FullErrorer); ok {
 		log.Printf("エラー発生: %s", fullErr.FullError())
 	}
 

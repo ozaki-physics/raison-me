@@ -3,7 +3,7 @@ package usecase
 import (
 	"fmt"
 
-	"github.com/ozaki-physics/raison-me/share"
+	"github.com/ozaki-physics/raison-me/share/errorer"
 )
 
 // ユースケース層の 独自エラー
@@ -48,7 +48,7 @@ func (e *usecaseError) Error() string {
 func (e *usecaseError) FullError() string {
 	// 再帰的に FullError を 呼び出すことで ラップ元のエラーも 全て 出力する
 	if e.err != nil {
-		if fullErr, ok := e.err.(share.FullErrorer); ok {
+		if fullErr, ok := e.err.(errorer.FullErrorer); ok {
 			return fmt.Sprintf("%s: %s", e.msg, fullErr.FullError())
 		}
 		return fmt.Sprintf("%s: %v", e.msg, e.err)
